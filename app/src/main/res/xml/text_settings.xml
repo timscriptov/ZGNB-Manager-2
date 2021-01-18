@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <androidx.preference.PreferenceCategory
+        android:title="@string/prefs_text"
+        android:layout="@layout/preference_category_custom">
+        <androidx.preference.CheckBoxPreference
+            android:defaultValue="false"
+            android:key="linewrap"
+            android:summary="@string/line_wrap_summary"
+            android:title="@string/line_wrap" />
+    </androidx.preference.PreferenceCategory>
+
+    <androidx.preference.PreferenceCategory
+        android:title="@string/appearance"
+        android:layout="@layout/preference_category_custom">
+
+        <androidx.preference.ListPreference
+            android:defaultValue="Sans Serif"
+            android:dialogTitle="@string/font_type_summary"
+            android:entries="@array/entries_font_type_prefs"
+            android:entryValues="@array/values_font_type_prefs"
+            android:key="fonttype"
+            android:summary="@string/font_type_summary"
+            android:title="@string/font_type" />
+
+        <androidx.preference.ListPreference
+            android:defaultValue="14"
+            android:dialogTitle="@string/font_size_summary"
+            android:entries="@array/entries_font_size_prefs"
+            android:entryValues="@array/values_font_size_prefs"
+            android:key="fontsize"
+            android:summary="@string/font_size_summary"
+            android:title="@string/font_size" />
+
+        <com.github.koston.preference.ColorPreference
+            android:defaultValue="@color/font_color"
+            style="@style/AppTheme.PreferenceDialog"
+            android:dialogTitle="@string/font_color_summary"
+            android:key="fontcolor"
+            android:summary="@string/font_color_summary"
+            android:title="@string/font_color" />
+
+        <com.github.koston.preference.ColorPreference
+            android:defaultValue="@color/background_color"
+            style="@style/AppTheme.PreferenceDialog"
+            android:dialogTitle="@string/bg_color_summary"
+            android:key="bgcolor"
+            android:summary="@string/bg_color_summary"
+            android:title="@string/bg_color" />
+
+    </androidx.preference.PreferenceCategory>
+
+</androidx.preference.PreferenceScreen>

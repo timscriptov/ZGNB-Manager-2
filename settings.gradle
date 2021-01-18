@@ -1,0 +1,14 @@
+include ':app',
+        ':apksigner',
+        ':codeview',
+        ':videoview',
+        ':audioplayer',
+        ':dx',
+        ':jadx',
+        //':jadx-1.1.0',
+        //':jadx-1.2.0',
+        ':axml',
+        ':xml2axml',
+        ':colorpicker',
+        ':libraries'
+        //':decompiler'

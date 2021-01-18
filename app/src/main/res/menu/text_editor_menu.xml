@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/save"
+        android:title="@string/save_text"/>
+    <item
+        android:id="@+id/search_string"
+        android:title="@string/search_string"/>
+    <item
+        android:id="@+id/preferences"
+        android:title="@string/preferences"/>
+    <item
+        android:id="@+id/exit"
+        android:title="@string/exit"/>
+</menu>       
+ 

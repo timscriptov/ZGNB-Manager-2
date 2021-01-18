@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/access_flags_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/accessflag"
+            android:textSize="15dip" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/access_flags_edit"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="accessflags"
+            android:textSize="17dip" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/super_class_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/superclazz"
+            android:textSize="15dip" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/super_class_edit"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Superclass"
+            android:textSize="17dip" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/interface_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/interfaze"
+            android:textSize="15dip" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/interface_edit"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="interfaces"
+            android:textSize="17dip" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/source_file_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sourcefile"
+            android:textSize="15dip" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/source_file_edit"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="sourcefile"
+            android:textSize="17dip" />
+
+    </LinearLayout>
+
+</LinearLayout>

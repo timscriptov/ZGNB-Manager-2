@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scroll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/code_edit"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:autoText="false"
+        android:capitalize="none"
+        android:gravity="top"
+        android:scrollbars="vertical"
+        android:textSize="17.0dip" />
+
+</ScrollView>

@@ -1,1 +1,3 @@
-# ZGNB-Manager-2
+# ZGNB Manager 2
+
+A useful tool to crack apk and manage file

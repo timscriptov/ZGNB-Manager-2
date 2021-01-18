@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <androidx.preference.PreferenceCategory
+        android:layout="@layout/preference_category_custom"
+        android:title="JaDX">
+
+        <androidx.preference.SwitchPreference
+            android:defaultValue="true"
+            android:key="skip_resources"
+            android:title="Skip Resources" />
+
+        <androidx.preference.SwitchPreference
+            android:defaultValue="true"
+            android:key="show_inconsistent_code"
+            android:title="Show Inconsistent Code" />
+
+    </androidx.preference.PreferenceCategory>
+
+</androidx.preference.PreferenceScreen>

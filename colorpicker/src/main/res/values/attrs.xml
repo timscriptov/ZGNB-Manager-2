@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+  <declare-styleable name="ColorPicker">
+    <attr name="wheelRadius" format="dimension" />
+    <attr name="wheelThickness" format="dimension" />
+    <attr name="centerCircleRadius" format="dimension" />
+    <attr name="centerCircleHaloRadius" format="dimension" />
+    <attr name="pointerRadius" format="dimension" />
+    <attr name="pointerHaloRadius" format="dimension" />
+    <attr name="pointerHaloColor" format="color" />
+  </declare-styleable>
+
+  <declare-styleable name="ColorPickerBars">
+    <attr name="barType">
+      <enum name="saturation" value="1" />
+      <enum name="value" value="2" />
+    </attr>
+    <attr name="barThickness" format="dimension" />
+    <attr name="barLength" format="dimension" />
+    <attr name="barPointerRadius" format="dimension" />
+    <attr name="barPointerHaloRadius" format="dimension" />
+    <attr name="barPointerHaloColor" format="color" />
+    <attr name="barOrientationHorizontal" format="boolean" />
+  </declare-styleable>
+
+  <declare-styleable name="ColorPreference">
+    <attr name="indicatorColorPreview" format="boolean|reference" />
+    <!--ColorPicker-->
+    <attr name="hueWheelRadius" format="dimension" />
+    <attr name="hueWheelThickness" format="dimension" />
+    <attr name="hueCenterCircleRadius" format="dimension" />
+    <attr name="hueCenterCircleHaloRadius" format="dimension" />
+    <attr name="huePointerRadius" format="dimension" />
+    <attr name="huePointerHaloRadius" format="dimension" />
+    <!--ColorBars-->
+    <attr name="barsThickness" format="dimension" />
+    <attr name="barsLength" format="dimension" />
+    <attr name="barsPointerRadius" format="dimension" />
+    <attr name="barsPointerHaloRadius" format="dimension" />
+    <!--Both-->
+    <attr name="pointersHaloColor" format="color" />
+  </declare-styleable>
+
+</resources>

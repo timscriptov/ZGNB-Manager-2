@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/icon"
+        android:background="@drawable/file_background"
+        android:padding="7dp"
+        android:layout_margin="2dp"
+        android:layout_width="48.0dip"
+        android:layout_height="48.0dip"
+        android:layout_marginRight="2.0dip" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/icon"
+        android:layout_weight="2.5"
+        android:gravity="center_vertical"
+        android:text="Text"
+        android:textSize="17.0dip" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/permissions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/text"
+        android:layout_marginRight="6.0dip"
+        android:layout_toRightOf="@+id/icon"
+        android:gravity="center_vertical"
+        android:text="Permissions"
+        android:textSize="12.0dip" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/times"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/text"
+        android:layout_marginRight="6.0dip"
+        android:layout_toRightOf="@+id/permissions"
+        android:gravity="center_vertical"
+        android:text="time"
+        android:textSize="12.0dip" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/text"
+        android:layout_marginRight="6.0dip"
+        android:layout_toRightOf="@+id/times"
+        android:gravity="center_vertical"
+        android:text="Size"
+        android:textSize="12.0dip" />
+
+</RelativeLayout>

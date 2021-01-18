@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/LinearLayout03"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="75dp"
+            android:layout_height="wrap_content" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="75dp"
+            android:layout_height="wrap_content"
+            android:text="@string/perm_read" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="75dp"
+            android:layout_height="wrap_content"
+            android:text="@string/perm_write" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="75dp"
+            android:layout_height="wrap_content"
+            android:text="@string/perm_exec" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/LinearLayout04"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="75dp"
+            android:layout_height="wrap_content"
+            android:text="@string/perm_owner" />
+
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/ckOwnRead"
+            android:layout_width="75dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3" />
+
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/ckOwnWrite"
+            android:layout_width="75dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3" />
+
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/ckOwnExec"
+            android:layout_width="75dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/LinearLayout02"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="75dp"
+            android:layout_height="wrap_content"
+            android:text="@string/perm_group" />
+
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/ckGrpRead"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3" />
+
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/ckGrpWrite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3" />
+
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/ckGrpExec"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="75dp"
+            android:layout_height="wrap_content"
+            android:text="@string/perm_other" />
+
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/ckOthRead"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3" />
+
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/ckOthWrite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3" />
+
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/ckOthExec"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout3"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnOk"
+            android:layout_width="85dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3"
+            android:text="@string/btn_ok" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnCancel"
+            android:layout_width="85dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3"
+            android:text="@string/btn_cancel" />
+
+    </LinearLayout>
+
+</LinearLayout>

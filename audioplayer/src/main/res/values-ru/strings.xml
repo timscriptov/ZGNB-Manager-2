@@ -1,0 +1,5 @@
+<resources>
+    <string name="audio_channel">Аудио уведомление</string>
+    <string name="no_artist">Исполнитель не указан</string>
+    <string name="no_title">Без названия</string>
+</resources>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/mass_decompile"
+        android:title="@string/jadx_save_code"/>
+    <item
+        android:id="@+id/jadx_settings"
+        android:title="@string/jadx_settings"/>
+</menu>

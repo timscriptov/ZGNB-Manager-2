@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="translate">
+        <item>Переводчик</item>
+    </string-array>
+
+    <string-array name="translate_provider">
+        <item>Переводчик Baidu</item>
+        <item>Переводчик Bing</item>
+
+    </string-array>
+    <string-array name="language">
+        <item>АВТО</item>
+        <item>Китайский</item>
+        <item>Английский</item>
+        <item>Японский</item>
+        <item>Корейский</item>
+        <item>Французкий</item>
+        <item>Тайский</item>
+        <item>Русский</item>
+        <item>Немецкий</item>
+        <item>Греческий</item>
+        <item>Итальянский</item>
+        <item>Испанский</item>
+        <item>Португальский</item>
+        <item>Арабский</item>
+    </string-array>
+
+    <string-array name="dialog_menu">
+        <item>Открыть в...</item>
+        <item>Текстовый редактор</item>
+        <item>Удалить</item>
+        <item>Переименовать</item>
+        <item>Копировать</item>
+        <item>Вырезать</item>
+        <item>Разрешения</item>
+    </string-array>
+
+    <string-array name="search_mod">
+        <item>Поиск строк</item>
+        <item>Поиск кода</item>
+        <item>Поиск констант</item>
+    </string-array>
+
+</resources>

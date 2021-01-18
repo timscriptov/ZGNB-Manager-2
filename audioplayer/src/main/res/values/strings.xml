@@ -1,0 +1,5 @@
+<resources>
+    <string name="audio_channel">Audio notification</string>
+    <string name="no_artist">No artist</string>
+    <string name="no_title">No title</string>
+</resources>

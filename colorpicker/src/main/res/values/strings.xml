@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="app_name">ColorPicker</string>
+  <string name="hex">FFFFFFFF</string>
+  <string name="hex_placeholder">#</string>
+</resources>

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.zengge.nbmanager">
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+	<uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.REORDER_TASKS"/>
+
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
+        tools:ignore="QueryAllPackagesPermission" />
+
+    <application
+        android:name=".App"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:requestLegacyExternalStorage="true"
+        android:largeHeap="true"
+        android:theme="@style/AppTheme"
+        android:label="@string/app_name" >
+        <activity
+            android:name="com.zengge.nbmanager.activities.MainActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.zengge.nbmanager.activities.ZipManagerActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="@string/zip_editor" />
+        <activity
+            android:name="com.zengge.nbmanager.activities.VideoPlayerActivity"
+            android:label="@string/videoplayer_label" />
+        <activity
+            android:name="com.zengge.nbmanager.activities.TextEditorActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="@string/text_editor" />
+        <activity
+            android:name="com.zengge.nbmanager.activities.ClassListActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="@string/class_editor" />
+        <activity
+            android:name="com.zengge.nbmanager.activities.ClassItemActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="@string/class_item" />
+        <activity
+            android:name="com.zengge.nbmanager.activities.SearchClassesActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="@string/search_class" />
+        <activity
+            android:name="com.zengge.nbmanager.activities.SearchMethodsActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="@string/search_method" />
+        <activity
+            android:name="com.zengge.nbmanager.activities.FieldListActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="@string/field_list" />
+        <activity
+            android:name="com.zengge.nbmanager.activities.FieldItemEditorActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="@string/field_item_editor" />
+        <activity
+            android:name="com.zengge.nbmanager.activities.FieldItemNewActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="@string/field_item_new" />
+        <activity
+            android:name="com.zengge.nbmanager.activities.MethodListActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="@string/method_list" />
+        <activity
+            android:name="com.zengge.nbmanager.activities.CodeEditorActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="@string/code_editor" />
+        <activity
+            android:name="com.zengge.nbmanager.activities.MethodItemEditorActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="@string/method_item_editor" />
+        <activity
+            android:name="com.zengge.nbmanager.activities.MethodItemNewActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="@string/method_item_new" />
+        <activity
+            android:name="com.zengge.nbmanager.activities.ClassInfoEditorActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="@string/class_info_editor" />
+        <activity
+            android:name="com.zengge.nbmanager.activities.TextSettingsActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="@string/text_preferences" />
+        <activity
+            android:name=".imageviewer.HugeImageViewerActivity"
+            android:label="@string/image_viewer" />
+        <activity
+            android:name="com.zengge.nbmanager.activities.AudioPlayerActivity"
+            android:label="@string/audioplayer_label" />
+		<activity
+            android:windowSoftInputMode="adjustPan"
+            android:name=".elfeditor.ElfActivity"
+            android:label="@string/elf_editor" />
+		<activity
+            android:windowSoftInputMode="adjustPan"
+            android:name=".arsceditor.ArscActivity"
+            android:label="@string/arsc_editor" />
+        <activity android:name="com.zengge.nbmanager.activities.PackageActivity" />
+        <activity android:name=".jadx.ShowCodeActivity" />
+        <activity android:name=".jadx.ShowDexActivity" />
+        <activity android:name="com.zengge.nbmanager.activities.JaDXSettingsActivity" />
+        <activity android:name="com.zengge.nbmanager.activities.ExceptionActivity" />
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths"/>
+        </provider>
+    </application>
+
+</manifest>
