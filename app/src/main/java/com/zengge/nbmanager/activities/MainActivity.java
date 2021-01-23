@@ -77,6 +77,7 @@ import com.zengge.nbmanager.arsceditor.ArscActivity;
 import com.zengge.nbmanager.elfeditor.ElfActivity;
 import com.zengge.nbmanager.imageviewer.HugeImageViewerActivity;
 import com.zengge.nbmanager.ui.Dialogs;
+import com.zengge.nbmanager.utils.DeviceInfo;
 import com.zengge.nbmanager.utils.DoBakSmaliUtils;
 import com.zengge.nbmanager.utils.DecompileFile;
 import com.zengge.nbmanager.utils.ExceptionHandler;
@@ -190,44 +191,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
-
-    public static @NotNull String getPkgSign(Context ctx) {
-        try {
-            PackageManager pm = ctx.getPackageManager();
-            @SuppressLint("PackageManagerGetSignatures") PackageInfo pi = pm.getPackageInfo(ctx.getPackageName(), PackageManager.GET_SIGNATURES);
-            return new String(pi.signatures[0].toChars());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "NULL";
-        }
-    }
-
-    public static boolean writeSrc(@NotNull File file, String content) {
-        FileOutputStream fop = null;
-        File par = new File(file.getParent());
-        if (!par.exists())
-            par.mkdirs();
-        try {
-            fop = new FileOutputStream(file);
-            if (!file.exists())
-                file.createNewFile();
-            byte[] contentInBytes = content.getBytes();
-            fop.write(contentInBytes);
-            fop.flush();
-            fop.close();
-            return true;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        } finally {
-            try {
-                if (fop != null)
-                    fop.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 
     public static boolean decompileJAR(String zip) {
         String output = new File(zip).getParent() + "/decompile";
@@ -1221,33 +1184,6 @@ public class MainActivity extends AppCompatActivity {
         return dialog;
     }
 
-    @SuppressLint({"MissingPermission", "HardwareIds"})
-    public void SystemInfo() {
-        StringBuilder info = new StringBuilder();
-        TelephonyManager tm = (TelephonyManager) getBaseContext().getSystemService(Context.TELEPHONY_SERVICE);
-        @SuppressLint("HardwareIds") String androidId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-        @SuppressLint("HardwareIds") String dui = new UUID(androidId.hashCode(),
-                ((long) tm.getDeviceId().hashCode() << 64 | tm.hashCode()) & tm.toString().hashCode()).toString();
-        dui = dui.replaceAll("-", "");
-        info.append("Model：").append(Build.MODEL).append("\n");
-        info.append("Manufacturer：").append(Build.MANUFACTURER).append("\n");
-        info.append("Android Version：").append(Build.VERSION.RELEASE).append("\n");
-        info.append("Android SDK Version：").append(Build.VERSION.SDK_INT).append("\n");
-        info.append("CPU ABI：").append(Build.CPU_ABI).append(" / ").append(Build.CPU_ABI2).append("\n");
-        info.append("Serial：").append(Build.SERIAL).append("\n");
-        info.append("Hardware：").append(Build.HARDWARE).append("\n");
-        info.append("基带版本：").append(Build.getRadioVersion()).append("\n");
-        info.append("BootLoader Version：").append(Build.BOOTLOADER).append("\n");
-        info.append("Device ID：").append(tm.getDeviceId()).append("\n");
-        info.append("Machine code：").append(dui).append("\n");
-        info.append("App signature：").append(Features.compressStrToInt(getPkgSign(this)));
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getString(R.string.system_info));
-        builder.setMessage(info.toString());
-        builder.setNeutralButton(R.string.btn_ok, null);
-        builder.show();
-    }
-
     public void showAbout() {
         Bitmap bmp;
         bmp = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
@@ -1267,7 +1203,7 @@ public class MainActivity extends AppCompatActivity {
         builder.setNeutralButton(R.string.btn_ok, null);
         builder.setPositiveButton(R.string.system_info, (dialog, which) -> {
             dialog.dismiss();
-            SystemInfo();
+            DeviceInfo.systemInfo(this);
         });
         builder.show();
     }
