@@ -207,6 +207,75 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /*private static boolean decompileJAR(String zip) {
+        String decompilestr;
+        int i = 1;
+        String debugfile = ScopedStorage.getStorageDirectory() + File.separator + "ZGNBManager" + File.separator
+                + "debug-" + System.currentTimeMillis() + ".txt";
+        if (!new File(new File(debugfile).getParent()).exists())
+            new File(new File(debugfile).getParent()).mkdirs();
+        Features.printLog(debugfile, "JAR Decompiler Debugging Info!", true);
+        Features.printLog(debugfile, "Processing JAR File : ", true);
+        try {
+            ZipFile zipFile = new ZipFile(zip);
+            Enumeration<ZipEntry> enu = (Enumeration<ZipEntry>) zipFile.entries();
+            while (enu.hasMoreElements()) {
+                ZipEntry zipElement = enu.nextElement();
+                zipFile.getInputStream(zipElement);
+                String fileName = zipElement.getName();
+                if (!fileName.endsWith(".class"))
+                    continue;
+                if (fileName.contains("$"))
+                    continue;
+                Features.printLog(debugfile, "(" + i + "): " + "Processing class file : " + fileName, true);
+                i++;
+                IdePreferences ip = new IdePreferences(false, false, true, true, false, false, false);
+                decompilestr = IdeDecompiler.decompile(ip, zip, fileName);
+                String destdir = zip.substring(0, zip.length() - 4) + "_src";
+                String dest = destdir + File.separator + fileName.substring(0, fileName.length() - 6) + ".java";
+                Features.printLog(debugfile, "Destination file : " + dest, true);
+                if (decompilestr == null) {
+                    Features.printLog(debugfile, "Decompiled String is NULL,skipping decompiling it!", true);
+                    Features.printLog(debugfile, "Exceptions are : " + "\n" + IdeDecompiler.errstr, true);
+                    continue;
+                }
+                if (!writeSrc(new File(dest), decompilestr))
+                    return false;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean writeSrc(@NotNull File file, String content) {
+        FileOutputStream fop = null;
+        File par = new File(file.getParent());
+        if (!par.exists())
+            par.mkdirs();
+        try {
+            fop = new FileOutputStream(file);
+            if (!file.exists())
+                file.createNewFile();
+            byte[] contentInBytes = content.getBytes();
+            fop.write(contentInBytes);
+            fop.flush();
+            fop.close();
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            try {
+                if (fop != null)
+                    fop.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }*/
+
     private static boolean isStandardJAR(String zip) {
         boolean value = false;
         try {
