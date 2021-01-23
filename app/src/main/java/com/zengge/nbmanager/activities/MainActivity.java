@@ -88,6 +88,7 @@ import com.zengge.nbmanager.utils.ZipExtract;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.java.decompiler.main.decompiler.ConsoleDecompiler;
 import org.jf.dexlib.DexFile;
 import org.jf.smali.main;
 
@@ -228,56 +229,19 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // https://github.com/JetBrains/intellij-community/tree/master/plugins/java-decompiler/engine
-    /*public static void JetBrainsDecompileJAR(String zip) {
+    public static boolean decompileJAR(String zip) {
         String output = new File(zip).getParent() + "/decompile";
         File file = new File(output);
         if (!file.exists()) {
             file.mkdir();
         }
-        ConsoleDecompiler.DoDecompile(zip, output);
-    }*/
-
-    private static boolean DecompileJAR(String zip) {
-        String decompilestr;
-        int i = 1;
-        String debugfile = ScopedStorage.getStorageDirectory() + File.separator + "ZGNBManager" + File.separator
-                + "debug-" + System.currentTimeMillis() + ".txt";
-        if (!new File(new File(debugfile).getParent()).exists())
-            new File(new File(debugfile).getParent()).mkdirs();
-        Features.printLog(debugfile, "JAR Decompiler Debugging Info!", true);
-        Features.printLog(debugfile, "Processing JAR File : ", true);
         try {
-            ZipFile zipFile = new ZipFile(zip);
-            Enumeration<ZipEntry> enu = (Enumeration<ZipEntry>) zipFile.entries();
-            while (enu.hasMoreElements()) {
-                ZipEntry zipElement = enu.nextElement();
-                zipFile.getInputStream(zipElement);
-                String fileName = zipElement.getName();
-                if (!fileName.endsWith(".class"))
-                    continue;
-                if (fileName.contains("$"))
-                    continue;
-                Features.printLog(debugfile, "(" + i + "): " + "Processing class file : " + fileName, true);
-                i++;
-                IdePreferences ip = new IdePreferences(false, false, true, true, false, false, false);
-                decompilestr = IdeDecompiler.decompile(ip, zip, fileName);
-                String destdir = zip.substring(0, zip.length() - 4) + "_src";
-                String dest = destdir + File.separator + fileName.substring(0, fileName.length() - 6) + ".java";
-                Features.printLog(debugfile, "Destination file : " + dest, true);
-                if (decompilestr == null) {
-                    Features.printLog(debugfile, "Decompiled String is NULL,skipping decompiling it!", true);
-                    Features.printLog(debugfile, "Exceptions are : " + "\n" + IdeDecompiler.errstr, true);
-                    continue;
-                }
-                if (!writeSrc(new File(dest), decompilestr))
-                    return false;
-            }
+            ConsoleDecompiler.DoDecompile(zip, output);
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
-        return true;
     }
 
     private static boolean isStandardJAR(String zip) {
@@ -607,7 +571,7 @@ public class MainActivity extends AppCompatActivity {
             }).start());
             builder.setNegativeButton(getString(R.string.decompile_jar), (dialog, which) -> new Thread(() -> {
                 mHandler.sendEmptyMessage(SHOWPROGRESS);
-                boolean dsuc = DecompileJAR(file.toString());
+                boolean dsuc = decompileJAR(file.toString());
                 if (dsuc)
                     showToast(getString(R.string.djar_success));
                 else
