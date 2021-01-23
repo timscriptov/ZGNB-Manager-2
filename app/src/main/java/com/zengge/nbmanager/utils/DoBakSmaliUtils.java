@@ -4,39 +4,40 @@ import org.jf.baksmali.Baksmali;
 import org.jf.baksmali.BaksmaliOptions;
 import org.jf.dexlib2.DexFileFactory;
 import org.jf.dexlib2.Opcodes;
-import org.jf.dexlib2.dexbacked.DexBackedDexFile;
+import org.jf.dexlib2.iface.DexFile;
 
 import java.io.File;
-import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.List;
 
 public class DoBakSmaliUtils {
-    public static boolean doBaksmali(String inpuFile, String outputDir) {
-        ArrayList arrayList = new ArrayList();
-        arrayList.add(".");
+    public static String[] bootClassPathDirsArray;
+
+    public static boolean doBaksmali(String infile, String outdir) {
+        List<String> bootClassPathDirs = new ArrayList<>();
+        bootClassPathDirs.add(".");
         try {
-            File file = new File(inpuFile);
-            if (!file.exists()) {
-                PrintStream printStream = System.err;
-                printStream.println("Can't find the file " + inpuFile);
+            File dexFileFile = new File(infile);
+            if(!dexFileFile.exists()) {
+                System.err.println("Can't find the file " + infile);
                 return false;
             }
-            DexBackedDexFile loadDexFile = DexFileFactory.loadDexFile(file, Opcodes.getDefault());
-            int size = arrayList.size();
-            String[] strArr = new String[size];
-            for (int i = 0; i < size; i++) {
-                strArr[i] = (String) arrayList.get(i);
-            }
-            Baksmali.disassembleDexFile(loadDexFile, new File(outputDir), Runtime.getRuntime().availableProcessors(), new BaksmaliOptions());
-            return true;
-        } catch (RuntimeException e) {
+            //Read in and parse the dex file
+            DexFile dexFile = DexFileFactory.loadDexFile(dexFileFile, Opcodes.getDefault());
+            bootClassPathDirsArray = new String[bootClassPathDirs.size()];
+            for(int i = 0; i < bootClassPathDirsArray.length; i++)
+                bootClassPathDirsArray[i] = bootClassPathDirs.get(i);
+            BaksmaliOptions bo = new BaksmaliOptions();
+            Baksmali.disassembleDexFile(dexFile, new File(outdir), Runtime.getRuntime().availableProcessors(), bo);
+        } catch(RuntimeException ex) {
             System.err.println("\n\nUNEXPECTED TOP-LEVEL EXCEPTION:");
-            e.printStackTrace();
+            ex.printStackTrace();
             return false;
-        } catch (Throwable th) {
+        } catch(Throwable ex) {
             System.err.println("\n\nUNEXPECTED TOP-LEVEL ERROR:");
-            th.printStackTrace();
+            ex.printStackTrace();
             return false;
         }
+        return true;
     }
 }
