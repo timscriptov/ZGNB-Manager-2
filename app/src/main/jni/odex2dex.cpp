@@ -119,7 +119,8 @@ char *j0c(JNIEnv *env, jstring jstr) {
     return rtn;
 }
 
-extern "C" JNIEXPORT jboolean JNICALL Java_com_zengge_nbmanager_Features_Odex2Dex(JNIEnv *env, jclass cls, jstring jstr1, jstring jstr2) {
+JNIEXPORT jboolean JNICALL Java_com_zengge_nbmanager_Features_Odex2Dex
+(JNIEnv *env, jclass cls, jstring jstr1, jstring jstr2) {
     char *s1 = j0c(env, jstr1);
     char *s2 = j0c(env, jstr2);
     if(procodex(s1, s2)) return JNI_TRUE;

@@ -82,9 +82,8 @@ namespace android {
             pthread_condattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);
             pthread_cond_init(&mCond, &attr);
             pthread_condattr_destroy(&attr);
-        } else {
+        } else
             pthread_cond_init(&mCond, NULL);
-        }
     }
     inline Condition::~Condition() {
         pthread_cond_destroy(&mCond);

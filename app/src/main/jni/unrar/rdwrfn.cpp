@@ -40,7 +40,6 @@ int ComprDataIO::UnpRead(byte *Addr, size_t Count) {
     ReadAddr = Addr;
     while (Count > 0) {
         Archive *SrcArc = (Archive *)SrcFile;
-
         size_t ReadSize = ((int64)Count > UnpPackedSize) ? (size_t)UnpPackedSize : Count;
         if (UnpackFromMemory) {
             memcpy(Addr, UnpackFromMemoryAddr, UnpackFromMemorySize);
@@ -108,7 +107,6 @@ int ComprDataIO::UnpRead(byte *Addr, size_t Count) {
 #endif
 
 void ComprDataIO::UnpWrite(byte *Addr, size_t Count) {
-
 #ifdef RARDLL
     RAROptions *Cmd = ((Archive *)SrcFile)->GetRAROptions();
     if (Cmd->DllOpMode != RAR_SKIP) {
@@ -128,7 +126,6 @@ void ComprDataIO::UnpWrite(byte *Addr, size_t Count) {
             _EBX = _ESP;
 #endif
             int RetCode = Cmd->ProcessDataProc(Addr, (int)Count);
-
             // Restore ESP after ProcessDataProc with wrongly defined calling
             // convention broken it.
 #if defined(_MSC_VER)
@@ -143,7 +140,6 @@ void ComprDataIO::UnpWrite(byte *Addr, size_t Count) {
         }
     }
 #endif // RARDLL
-
     UnpWrAddr = Addr;
     UnpWrSize = Count;
     if (UnpackToMemory) {
@@ -183,10 +179,8 @@ void ComprDataIO::ShowUnpRead(int64 ArcPos, int64 ArcSize) {
             ArcSize = TotalArcSize;
             ArcPos += ProcessedArcSize;
         }
-
         Archive *SrcArc = (Archive *)SrcFile;
         RAROptions *Cmd = SrcArc->GetRAROptions();
-
         int CurPercent = ToPercent(ArcPos, ArcSize);
         if (!Cmd->DisablePercentage && CurPercent != LastPercent) {
             mprintf("\b\b\b\b%3d%%", CurPercent);

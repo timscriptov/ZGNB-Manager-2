@@ -10,13 +10,11 @@ bool WideToChar(const wchar *Src, char *Dest, size_t DestSize) {
     WideToUtf(Src, Dest, DestSize);
 #else
 #ifdef MBFUNCTIONS
-
     size_t ResultingSize = wcstombs(Dest, Src, DestSize);
     if (ResultingSize == (size_t) - 1)
         RetCode = false;
     if (ResultingSize == 0 && *Src != 0)
         RetCode = false;
-
     if ((!RetCode || *Dest == 0 && *Src != 0) && DestSize > NM && strlenw(Src) < NM) {
         /* Workaround for strange Linux Unicode functions bug.
            Some of wcstombs and mbstowcs implementations in some situations
@@ -25,7 +23,6 @@ bool WideToChar(const wchar *Src, char *Dest, size_t DestSize) {
         */
         return(WideToChar(Src, Dest, NM));
     }
-
 #else
     if (UnicodeEnabled()) {
     } else
@@ -51,13 +48,11 @@ bool CharToWide(const char *Src, wchar *Dest, size_t DestSize) {
     UtfToWide(Src, Dest, DestSize);
 #else
 #ifdef MBFUNCTIONS
-
     size_t ResultingSize = mbstowcs(Dest, Src, DestSize);
     if (ResultingSize == (size_t) - 1)
         RetCode = false;
     if (ResultingSize == 0 && *Src != 0)
         RetCode = false;
-
     if ((!RetCode || *Dest == 0 && *Src != 0) && DestSize > NM && strlen(Src) < NM) {
         /* Workaround for strange Linux Unicode functions bug.
            Some of wcstombs and mbstowcs implementations in some situations

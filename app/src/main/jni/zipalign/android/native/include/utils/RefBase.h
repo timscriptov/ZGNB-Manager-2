@@ -167,9 +167,8 @@ inline bool operator _op_ (const U* o) const {                  \
             android_atomic_inc(&mCount);
         }
         inline void decStrong(const void *id) const {
-            if (android_atomic_dec(&mCount) == 1) {
+            if (android_atomic_dec(&mCount) == 1)
                 delete static_cast<const T *>(this);
-            }
         }
         //! DEBUGGING ONLY: Get current strong ref count.
         inline int32_t getStrongCount() const {
@@ -320,9 +319,8 @@ inline bool operator _op_ (const U* o) const {                  \
     template<typename T>
     wp<T>::wp(const sp<T> &other)
         : m_ptr(other.m_ptr) {
-        if (m_ptr) {
+        if (m_ptr)
             m_refs = m_ptr->createWeak(this);
-        }
     }
 
     template<typename T> template<typename U>
@@ -343,9 +341,8 @@ inline bool operator _op_ (const U* o) const {                  \
     template<typename T> template<typename U>
     wp<T>::wp(const sp<U> &other)
         : m_ptr(other.m_ptr) {
-        if (m_ptr) {
+        if (m_ptr)
             m_refs = m_ptr->createWeak(this);
-        }
     }
 
     template<typename T>
@@ -428,9 +425,8 @@ inline bool operator _op_ (const U* o) const {                  \
     template<typename T>
     sp<T> wp<T>::promote() const {
         sp<T> result;
-        if (m_ptr && m_refs->attemptIncStrong(&result)) {
+        if (m_ptr && m_refs->attemptIncStrong(&result))
             result.set_pointer(m_ptr);
-        }
         return result;
     }
 

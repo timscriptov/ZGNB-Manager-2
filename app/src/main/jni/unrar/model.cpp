@@ -40,11 +40,9 @@ void ModelPPM::RestartModelRare() {
         MinContext->U.Stats[i].Freq = 1;
         MinContext->U.Stats[i].Successor = NULL;
     }
-
     static const ushort InitBinEsc[] = {
         0x3CDD, 0x1F3F, 0x59BF, 0x48F3, 0x64A1, 0x5ABC, 0x6632, 0x6051
     };
-
     for (i = 0; i < 128; i++)
         for (k = 0; k < 8; k++)
             for (m = 0; m < 64; m += 8)
@@ -56,7 +54,7 @@ void ModelPPM::RestartModelRare() {
 
 
 void ModelPPM::StartModelRare(int MaxOrder) {
-    int i, k, m , Step;
+    int i, k, m, Step;
     EscCount = 1;
     /*
       if (MaxOrder < 2)
@@ -465,7 +463,6 @@ void ModelPPM::CleanUp() {
 bool ModelPPM::DecodeInit(Unpack *UnpackRead, int &EscChar) {
     int MaxOrder = UnpackRead->GetChar();
     bool Reset = (MaxOrder & 0x20) != 0;
-
     int MaxMB;
     if (Reset)
         MaxMB = UnpackRead->GetChar();

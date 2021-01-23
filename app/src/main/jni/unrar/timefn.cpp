@@ -24,7 +24,6 @@ RarTime &RarTime::operator =(FILETIME &ft) {
     }
     if (rlt.Month > 2 && IsLeapYear(rlt.Year))
         rlt.yDay++;
-
     st.wMilliseconds = 0;
     SystemTimeToFileTime(&st, &zft);
     rlt.Reminder = lft.dwLowDateTime - zft.dwLowDateTime;
@@ -55,7 +54,6 @@ void RarTime::GetWin32(FILETIME *ft) {
 RarTime &RarTime::operator =(time_t ut) {
     struct tm *t;
     t = localtime(&ut);
-
     rlt.Year = t->tm_year + 1900;
     rlt.Month = t->tm_mon + 1;
     rlt.Day = t->tm_mday;
@@ -71,7 +69,6 @@ RarTime &RarTime::operator =(time_t ut) {
 
 time_t RarTime::GetUnix() {
     struct tm t;
-
     t.tm_sec = rlt.Second;
     t.tm_min = rlt.Minute;
     t.tm_hour = rlt.Hour;
@@ -101,20 +98,16 @@ int64 RarTime::GetRaw() {
     return(INT32TO64(0, ut) * 10000000 + rlt.Reminder);
 #else
     // We should never be here. It is better to use standard time functions.
-
     // Days since 1970. We do not care about leap years for code simplicity.
     // It should be acceptable for comprisons.
     int64 r = (rlt.Year - 1970) * 365; // Days since 1970.
-
     // Cumulative day value for beginning of every month.
     static int MonthToDay[12] = {0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335};
-
     r += MonthToDay[rlt.Month - 1] + (rlt.Day - 1); // Add days since beginning of year.
     r = r * 24 + rlt.Hour; // Hours.
     r = r * 60 + rlt.Minute; // Minutes.
     r = r * 60 + rlt.Second; // Seconds.
     r = r * 10000000 + rlt.Reminder; // 100-nanosecond intervals.
-
     return(r);
 #endif
 }
@@ -143,16 +136,13 @@ void RarTime::SetRaw(int64 RawTime) {
     RawTime /= 24;     // Days since 1970.
     rlt.Year = uint(1970 + RawTime / 365);
     RawTime %= 365;    // Days since beginning of year.
-
     // Cumulative day value for beginning of every month.
     static int MonthToDay[12] = {0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335};
-
     for (int I = 0; I < 12; I++)
         if (RawTime >= MonthToDay[I]) {
             rlt.Day = uint(RawTime - MonthToDay[I] + 1);
             rlt.Month = I + 1;
         }
-
     rlt.wDay = 0;
     rlt.yDay = 0;
 #endif

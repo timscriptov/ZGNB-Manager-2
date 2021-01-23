@@ -208,12 +208,10 @@ wchar *strncpyzw(wchar *dest, const wchar *src, size_t maxlen) {
 void itoa(int64 n, char *Str) {
     char NumStr[50];
     size_t Pos = 0;
-
     do {
         NumStr[Pos++] = char(n % 10) + '0';
         n = n / 10;
     } while (n != 0);
-
     for (size_t I = 0; I < Pos; I++)
         Str[I] = NumStr[Pos - I - 1];
     Str[Pos] = 0;

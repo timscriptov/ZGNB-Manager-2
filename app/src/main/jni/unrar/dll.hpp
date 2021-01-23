@@ -55,7 +55,6 @@ struct RARHeaderData {
     unsigned int CmtState;
 };
 
-
 struct RARHeaderDataEx {
     char         ArcName[1024];
     wchar_t      ArcNameW[1024];
@@ -78,7 +77,6 @@ struct RARHeaderDataEx {
     unsigned int CmtState;
     unsigned int Reserved[1024];
 };
-
 
 struct RAROpenArchiveData {
     char         *ArcName;

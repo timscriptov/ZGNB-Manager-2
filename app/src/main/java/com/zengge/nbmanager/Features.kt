@@ -6,8 +6,6 @@ object Features {
     @JvmStatic
     external fun Oat2Dex(f: String?): Boolean
     @JvmStatic
-    external fun printLog(file: String?, content: String?, append: Boolean)
-    @JvmStatic
     external fun Odex2Dex(file: String?, dest: String?): Boolean
     @JvmStatic
     external fun ZipAlign(zip: String?, destZip: String?): Boolean
@@ -19,4 +17,8 @@ object Features {
     external fun compressStrToInt(str: String?): String?
     @JvmStatic
     external fun ELFHash(strUri: String?): Long
+    @JvmStatic
+    external fun dumpDex(apiLevel: Int, appEntry: String?): Int
+    @JvmStatic
+    external fun AStyleMain(text: String?, opt: String?): String?
 }

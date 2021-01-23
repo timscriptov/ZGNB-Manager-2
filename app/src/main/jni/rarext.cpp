@@ -9,7 +9,8 @@
 
 #define EXCEPTION -1601
 
-extern "C" JNIEXPORT jint JNICALL Java_com_zengge_nbmanager_Features_ExtractAllRAR(JNIEnv *env, jclass cls, jstring archive, jstring target) {
+JNIEXPORT jint JNICALL Java_com_zengge_nbmanager_Features_ExtractAllRAR
+(JNIEnv *env, jclass cls, jstring archive, jstring target) {
     try {
         const char *targetDir = env->GetStringUTFChars(target, NULL);
         const char *rarName = env->GetStringUTFChars(archive, NULL);

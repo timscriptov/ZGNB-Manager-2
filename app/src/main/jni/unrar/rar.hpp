@@ -8,7 +8,6 @@
 #include "dll.hpp"
 #endif
 
-
 #ifndef _WIN_CE
 #include "version.hpp"
 #endif
@@ -49,21 +48,15 @@
 #include "resource.hpp"
 #include "compress.hpp"
 
-
 #include "rarvm.hpp"
 #include "model.hpp"
 
-
 #include "unpack.hpp"
-
 
 #include "extinfo.hpp"
 #include "extract.hpp"
 
-
-
 #include "list.hpp"
-
 
 #include "rs.hpp"
 #include "recvol.hpp"
@@ -72,6 +65,5 @@
 #include "ulinks.hpp"
 
 #include "global.hpp"
-
 
 #endif

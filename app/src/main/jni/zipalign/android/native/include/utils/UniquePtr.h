@@ -183,7 +183,6 @@ int main(int argc, char *argv[]) {
     //
     // UniquePtr<T> tests...
     //
-
     // Can we free a single object?
     {
         UniquePtr<C> c(new C);
@@ -207,11 +206,9 @@ int main(int argc, char *argv[]) {
         assert(cCount == 1);
     }
     assert(cCount == 0);
-
     //
     // UniquePtr<T[]> tests...
     //
-
     // Can we free an array?
     {
         UniquePtr<C[]> cs(new C[4]);
@@ -234,7 +231,6 @@ int main(int argc, char *argv[]) {
         assert(cCount == 2);
     }
     assert(cCount == 0);
-
     //
     // Custom deleter tests...
     //

@@ -253,7 +253,7 @@ enum {
 /* parameter for NATIVE_WINDOW_SET_BUFFERS_TRANSFORM */
 enum {
     /* flip source image horizontally */
-    NATIVE_WINDOW_TRANSFORM_FLIP_H = HAL_TRANSFORM_FLIP_H ,
+    NATIVE_WINDOW_TRANSFORM_FLIP_H = HAL_TRANSFORM_FLIP_H,
     /* flip source image vertically */
     NATIVE_WINDOW_TRANSFORM_FLIP_V = HAL_TRANSFORM_FLIP_V,
     /* rotate source image 90 degrees clock-wise */

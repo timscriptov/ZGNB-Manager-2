@@ -70,7 +70,6 @@ bool SubAllocator::StartSubAllocator(int SASize) {
     if (SubAllocatorSize == t)
         return TRUE;
     StopSubAllocator();
-
     // Original algorithm expects FIXED_UNIT_SIZE, but actual structure size
     // can be larger. So let's recalculate the allocated size and add two more
     // units: one as reserve for HeapEnd overflow checks and another
@@ -80,11 +79,9 @@ bool SubAllocator::StartSubAllocator(int SASize) {
         ErrHandler.MemoryError();
         return FALSE;
     }
-
     // HeapEnd did not present in original algorithm. We added it to control
     // invalid memory access attempts when processing corrupt archived data.
     HeapEnd = HeapStart + AllocSize - UNIT_SIZE;
-
     SubAllocatorSize = t;
     return TRUE;
 }
@@ -94,26 +91,21 @@ void SubAllocator::InitSubAllocator() {
     int i, k;
     memset(FreeList, 0, sizeof(FreeList));
     pText = HeapStart;
-
     // Original algorithm operates with 12 byte FIXED_UNIT_SIZE, but actual
     // size of RAR_MEM_BLK and PPM_CONTEXT structures can exceed this value
     // because of alignment and larger pointer fields size.
     // So we define UNIT_SIZE for this larger size and adjust memory
     // pointers accordingly.
-
     // Size2 is (HiUnit-LoUnit) memory area size to allocate as originally
     // supposed by compression algorithm. It is 7/8 of total allocated size.
     uint Size2 = FIXED_UNIT_SIZE * (SubAllocatorSize / 8 / FIXED_UNIT_SIZE * 7);
-
     // RealSize2 is the real adjusted size of (HiUnit-LoUnit) memory taking
     // into account that our UNIT_SIZE can be larger than FIXED_UNIT_SIZE.
     uint RealSize2 = Size2 / FIXED_UNIT_SIZE * UNIT_SIZE;
-
     // Size1 is the size of memory area from HeapStart to FakeUnitsStart
     // as originally supposed by compression algorithm. This area can contain
     // different data types, both single symbols and structures.
     uint Size1 = SubAllocatorSize - Size2;
-
     // Real size of this area. We correct it according to UNIT_SIZE vs
     // FIXED_UNIT_SIZE difference. Also we add one more UNIT_SIZE
     // to compensate a possible reminder from Size1/FIXED_UNIT_SIZE,
@@ -121,19 +113,16 @@ void SubAllocator::InitSubAllocator() {
     // this Size1%FIXED_UNIT_SIZE reminder, because it allows to align
     // UnitsStart easily and adding more than reminder is ok for algorithm.
     uint RealSize1 = Size1 / FIXED_UNIT_SIZE * UNIT_SIZE + UNIT_SIZE;
-
     // RealSize1 must be divided by UNIT_SIZE without a reminder, so UnitsStart
     // is aligned to UNIT_SIZE. It is important for those architectures,
     // where a proper memory alignment is mandatory. Since we produce RealSize1
     // multiplying by UNIT_SIZE, this condition is always true. So LoUnit,
     // UnitsStart, HeapStart are properly aligned,
     LoUnit = UnitsStart = HeapStart + RealSize1;
-
     // When we reach FakeUnitsStart, we restart the model. It is where
     // the original algorithm expected to see UnitsStart. Real UnitsStart
     // can have a larger value.
     FakeUnitsStart = HeapStart + Size1;
-
     HiUnit = LoUnit + RealSize2;
     for (i = 0, k = 1; i < N1     ; i++, k += 1)
         Indx2Units[i] = k;

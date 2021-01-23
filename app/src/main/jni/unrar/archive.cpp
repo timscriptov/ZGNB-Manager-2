@@ -21,13 +21,10 @@ Archive::Archive(RAROptions *InitCmd) {
     Encrypted = false;
     BrokenFileHeader = false;
     LastReadBlock = 0;
-
     CurBlockPos = 0;
     NextBlockPos = 0;
-
     RecoveryPos = SIZEOF_MARKHEAD;
     RecoverySectors = -1;
-
     memset(&NewMhd, 0, sizeof(NewMhd));
     NewMhd.HeadType = MAIN_HEAD;
     NewMhd.HeadSize = SIZEOF_NEWMHD;
@@ -41,12 +38,9 @@ Archive::Archive(RAROptions *InitCmd) {
 #endif
     *FirstVolumeName = 0;
     *FirstVolumeNameW = 0;
-
     Splitting = false;
     NewArchive = false;
-
     SilentOpen = false;
-
 }
 
 
@@ -161,7 +155,6 @@ bool Archive::IsArchive(bool EnableBroken) {
     Signed = (NewMhd.PosAV != 0);
     Protected = (NewMhd.Flags & MHD_PROTECT) != 0;
     Encrypted = (NewMhd.Flags & MHD_PASSWORD) != 0;
-
     if (NewMhd.EncryptVer > UNP_VER) {
 #ifdef RARDLL
         Cmd->DllError = ERAR_UNKNOWN_FORMAT;
@@ -177,14 +170,11 @@ bool Archive::IsArchive(bool EnableBroken) {
 #ifdef RARDLL
     SilentOpen = true;
 #endif
-
     //if not encrypted, we'll check it below
     NotFirstVolume = Encrypted && (NewMhd.Flags & MHD_FIRSTVOLUME) == 0;
-
     if (!SilentOpen || !Encrypted) {
         SaveFilePos SavePos(*this);
         int64 SaveCurBlockPos = CurBlockPos, SaveNextBlockPos = NextBlockPos;
-
         NotFirstVolume = false;
         while (ReadHeader() != 0) {
             int HeaderType = GetHeaderType();
@@ -209,7 +199,6 @@ bool Archive::IsArchive(bool EnableBroken) {
         strcpy(FirstVolumeName, FileName);
         strcpyw(FirstVolumeNameW, FileNameW);
     }
-
     return(true);
 }
 

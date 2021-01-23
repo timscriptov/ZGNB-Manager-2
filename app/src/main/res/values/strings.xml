@@ -232,5 +232,6 @@
     <string name="image_viewer">Image Viewer</string>
     <string name="elf_editor">ELF Editor</string>
     <string name="arsc_editor">Arsc Editor</string>
+    <string name="format_code">Format code</string>
 
 </resources>

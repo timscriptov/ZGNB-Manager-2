@@ -53,7 +53,6 @@ bool CreatePath(const char *Path, const wchar *PathW, bool SkipLastName) {
 #endif
     bool IgnoreAscii = false;
     bool Success = true;
-
     const char *s = Path;
     for (int PosW = 0;; PosW++) {
         if (s == NULL || s - Path >= NM || *s == 0)
@@ -104,16 +103,13 @@ void SetDirTime(const char *Name, const wchar *NameW, RarTime *ftm, RarTime *ftc
 #ifdef _WIN_32
     if (!WinNT())
         return;
-
     bool sm = ftm != NULL && ftm->IsSet();
     bool sc = ftc != NULL && ftc->IsSet();
     bool sa = fta != NULL && fta->IsSet();
-
     unsigned int DirAttr = GetFileAttr(Name, NameW);
     bool ResetAttr = (DirAttr != 0xffffffff && (DirAttr & FA_RDONLY) != 0);
     if (ResetAttr)
         SetFileAttr(Name, NameW, 0);
-
     wchar DirNameW[NM];
     GetWideName(Name, NameW, DirNameW);
     HANDLE hFile = CreateFileW(DirNameW, GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE,
@@ -158,12 +154,10 @@ int64 GetFreeDisk(const char *Name) {
 #ifdef _WIN_32
     char Root[NM];
     GetPathRoot(Name, Root);
-
     typedef BOOL (WINAPI * GETDISKFREESPACEEX)(
         LPCTSTR, PULARGE_INTEGER, PULARGE_INTEGER, PULARGE_INTEGER
     );
     static GETDISKFREESPACEEX pGetDiskFreeSpaceEx = NULL;
-
     if (pGetDiskFreeSpaceEx == NULL) {
         HMODULE hKernel = GetModuleHandle("kernel32.dll");
         if (hKernel != NULL)
@@ -177,7 +171,6 @@ int64 GetFreeDisk(const char *Name) {
                 uiUserFree.u.HighPart <= uiTotalFree.u.HighPart)
             return(INT32TO64(uiUserFree.u.HighPart, uiUserFree.u.LowPart));
     }
-
     // We are here if we failed to load GetDiskFreeSpaceExA.
     DWORD SectorsPerCluster, BytesPerSector, FreeClusters, TotalClusters;
     if (!GetDiskFreeSpace(*Root ? Root : NULL, &SectorsPerCluster, &BytesPerSector, &FreeClusters, &TotalClusters))
@@ -454,16 +447,13 @@ uint CalcFileCRC(File *SrcFile, int64 Size, CALCCRC_SHOWMODE ShowMode) {
     Array<byte> Data(BufSize);
     int64 BlockCount = 0;
     uint DataCRC = 0xffffffff;
-
 #if !defined(SILENT) && !defined(_WIN_CE)
     int64 FileLength = SrcFile->FileLength();
     if (ShowMode != CALCCRC_SHOWNONE) {
         mprintf(St(MCalcCRC));
         mprintf("     ");
     }
-
 #endif
-
     SrcFile->Seek(0, SEEK_SET);
     while (true) {
         size_t SizeToRead;
@@ -474,7 +464,6 @@ uint CalcFileCRC(File *SrcFile, int64 Size, CALCCRC_SHOWMODE ShowMode) {
         int ReadSize = SrcFile->Read(&Data[0], SizeToRead);
         if (ReadSize == 0)
             break;
-
         ++BlockCount;
         if ((BlockCount & 15) == 0) {
 #if !defined(SILENT) && !defined(_WIN_CE)

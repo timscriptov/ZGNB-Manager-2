@@ -2,7 +2,6 @@ bool Archive::GetComment(Array<byte> *CmtData, Array<wchar> *CmtDataW) {
     if (!MainComment)
         return(false);
     SaveFilePos SavePos(*this);
-
 #ifndef SFX_MODULE
     ushort CmtLength;
     if (OldFormat) {
@@ -53,7 +52,6 @@ bool Archive::GetComment(Array<byte> *CmtData, Array<wchar> *CmtDataW) {
         DataIO.SetPackedSizeToRead(CmtLength);
         Unpack.SetDestSize(UnpCmtLength);
         Unpack.DoUnpack(CommHead.UnpVer, false);
-
         if (!OldFormat && ((~DataIO.UnpFileCRC) & 0xffff) != CommHead.CommCRC) {
             Log(FileName, St(MLogCommBrk));
             Alarm();
@@ -67,7 +65,6 @@ bool Archive::GetComment(Array<byte> *CmtData, Array<wchar> *CmtDataW) {
         }
     } else {
         CmtData->Alloc(CmtLength);
-
         Read(&((*CmtData)[0]), CmtLength);
         if (!OldFormat && CommHead.CommCRC != (~CRC(0xffffffff, &((*CmtData)[0]), CmtLength) & 0xffff)) {
             Log(FileName, St(MLogCommBrk));
@@ -81,7 +78,6 @@ bool Archive::GetComment(Array<byte> *CmtData, Array<wchar> *CmtDataW) {
     if (CmtData->Size() > 0) {
         size_t CmtSize = CmtData->Size();
         OemToCharBuff((char *)CmtData->Addr(), (char *)CmtData->Addr(), (DWORD)CmtSize);
-
         if (CmtDataW != NULL) {
             CmtDataW->Alloc(CmtSize + 1);
             CmtData->Push(0);
@@ -156,12 +152,9 @@ void Archive::ViewFileComment() {
     Seek(CurBlockPos + SIZEOF_NEWLHD + NewLhd.NameSize, SEEK_SET);
     int64 SaveCurBlockPos = CurBlockPos;
     int64 SaveNextBlockPos = NextBlockPos;
-
     size_t Size = ReadHeader();
-
     CurBlockPos = SaveCurBlockPos;
     NextBlockPos = SaveNextBlockPos;
-
     if (Size < 7 || CommHead.HeadType != COMM_HEAD)
         return;
     if (CommHead.HeadCRC != HeaderCRC) {
@@ -174,9 +167,9 @@ void Archive::ViewFileComment() {
             CommHead.Method > 0x30 || CommHead.UnpSize > MaxSize)
         return;
     Read(&CmtBuf[0], CommHead.UnpSize);
-    if (CommHead.CommCRC != ((~CRC(0xffffffff, &CmtBuf[0], CommHead.UnpSize) & 0xffff))) {
+    if (CommHead.CommCRC != ((~CRC(0xffffffff, &CmtBuf[0], CommHead.UnpSize) & 0xffff)))
         Log(FileName, St(MLogBrokFCmt));
-    } else {
+    else {
         OutComment(&CmtBuf[0], CommHead.UnpSize);
 #ifndef GUI
         mprintf("\n");

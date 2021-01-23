@@ -56,9 +56,8 @@ namespace android {
         void dispose();
 
         inline void edit() {
-            if (mBuckets && !SharedBuffer::bufferFromData(mBuckets)->onlyOwner()) {
+            if (mBuckets && !SharedBuffer::bufferFromData(mBuckets)->onlyOwner())
                 clone();
-            }
         }
 
         void setTo(const BasicHashtableImpl &other);
@@ -374,18 +373,16 @@ namespace android {
     template <typename TKey, typename TEntry>
     void BasicHashtable<TKey, TEntry>::initializeBucketEntry(Bucket &bucket,
             const void *__restrict__ entry) const {
-        if (!traits<TEntry>::has_trivial_copy) {
+        if (!traits<TEntry>::has_trivial_copy)
             new (&entryFor(bucket)) TEntry(*(static_cast<const TEntry *>(entry)));
-        } else {
+        else
             memcpy(&entryFor(bucket), entry, sizeof(TEntry));
-        }
     }
 
     template <typename TKey, typename TEntry>
     void BasicHashtable<TKey, TEntry>::destroyBucketEntry(Bucket &bucket) const {
-        if (!traits<TEntry>::has_trivial_dtor) {
+        if (!traits<TEntry>::has_trivial_dtor)
             entryFor(bucket).~TEntry();
-        }
     }
 
 }; // namespace android

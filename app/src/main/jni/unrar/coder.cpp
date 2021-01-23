@@ -7,7 +7,6 @@ inline unsigned int RangeCoder::GetChar() {
 
 void RangeCoder::InitDecoder(Unpack *UnpackRead) {
     RangeCoder::UnpackRead = UnpackRead;
-
     low = code = 0;
     range = uint(-1);
     for (int i = 0; i < 4; i++)

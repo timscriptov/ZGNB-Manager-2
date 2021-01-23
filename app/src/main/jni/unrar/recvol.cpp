@@ -49,7 +49,6 @@ bool RecVolumes::Restore(RAROptions *Cmd, const char *Name,
             }
         }
     }
-
     Archive Arc(Cmd);
     if (!Arc.WCheckOpen(ArcName, ArcNameW))
         return(false);
@@ -66,15 +65,12 @@ bool RecVolumes::Restore(RAROptions *Cmd, const char *Name,
     strcpy(RecVolMask, ArcName);
     size_t BaseNamePartLength = VolNumStart - ArcName;
     strcpy(RecVolMask + BaseNamePartLength, "*.rev");
-
 #ifndef SILENT
     int64 RecFileSize = 0;
 #endif
-
 #ifndef SILENT
     mprintf(St(MCalcCRCAllVol));
 #endif
-
     FindFile Find;
     Find.SetMask(RecVolMask);
     struct FindData RecData;
@@ -152,19 +148,15 @@ bool RecVolumes::Restore(RAROptions *Cmd, const char *Name,
 #endif
     }
 #ifndef SILENT
-    if (!Silent || FoundRecVolumes != 0) {
+    if (!Silent || FoundRecVolumes != 0)
         mprintf(St(MRecVolFound), FoundRecVolumes);
-    }
 #endif
     if (FoundRecVolumes == 0)
         return(false);
-
     bool WriteFlags[256];
     memset(WriteFlags, 0, sizeof(WriteFlags));
-
     char LastVolName[NM];
     *LastVolName = 0;
-
     for (int CurArcNum = 0; CurArcNum < FileNumber; CurArcNum++) {
         Archive *NewFile = new Archive;
         bool ValidVolume = FileExist(ArcName);
@@ -203,10 +195,8 @@ bool RecVolumes::Restore(RAROptions *Cmd, const char *Name,
             NewFile->TCreate(ArcName);
             WriteFlags[CurArcNum] = true;
             MissingVolumes++;
-
             if (CurArcNum == FileNumber - 1)
                 strcpy(LastVolName, ArcName);
-
 #ifndef SILENT
             mprintf(St(MAbsNextVol), ArcName);
 #endif
@@ -214,18 +204,15 @@ bool RecVolumes::Restore(RAROptions *Cmd, const char *Name,
         SrcFile[CurArcNum] = (File *)NewFile;
         NextVolumeName(ArcName, ArcNameW, ASIZE(ArcName), !NewNumbering);
     }
-
 #ifndef SILENT
     mprintf(St(MRecVolMissing), MissingVolumes);
 #endif
-
     if (MissingVolumes == 0) {
 #ifndef SILENT
         mprintf(St(MRecVolAllExist));
 #endif
         return(false);
     }
-
     if (MissingVolumes > FoundRecVolumes) {
 #ifndef SILENT
         mprintf(St(MRecVolCannotFix));
@@ -235,16 +222,12 @@ bool RecVolumes::Restore(RAROptions *Cmd, const char *Name,
 #ifndef SILENT
     mprintf(St(MReconstructing));
 #endif
-
     RSCoder RSC(RecVolNumber);
-
     int TotalFiles = FileNumber + RecVolNumber;
     int Erasures[256], EraSize = 0;
-
     for (int I = 0; I < TotalFiles; I++)
         if (WriteFlags[I] || SrcFile[I] == NULL)
             Erasures[EraSize++] = I;
-
 #ifndef SILENT
     int64 ProcessedSize = 0;
 #ifndef GUI
@@ -253,7 +236,6 @@ bool RecVolumes::Restore(RAROptions *Cmd, const char *Name,
 #endif
 #endif
     int RecCount = 0;
-
     while (true) {
         if ((++RecCount & 15) == 0)
             Wait();

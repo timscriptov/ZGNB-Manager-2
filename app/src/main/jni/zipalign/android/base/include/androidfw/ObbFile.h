@@ -76,16 +76,13 @@ namespace android {
                 *length = 0;
                 return NULL;
             }
-
             *length = sizeof(mSalt);
             return mSalt;
         }
 
         bool setSalt(const unsigned char *salt, size_t length) {
-            if (length != sizeof(mSalt)) {
+            if (length != sizeof(mSalt))
                 return false;
-            }
-
             memcpy(mSalt, salt, sizeof(mSalt));
             mFlags |= OBB_SALTED;
             return true;
@@ -96,11 +93,10 @@ namespace android {
         }
 
         void setOverlay(bool overlay) {
-            if (overlay) {
+            if (overlay)
                 mFlags |= OBB_OVERLAY;
-            } else {
+            else
                 mFlags &= ~OBB_OVERLAY;
-            }
         }
 
         static inline uint32_t get4LE(const unsigned char *buf) {

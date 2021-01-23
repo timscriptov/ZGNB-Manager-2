@@ -125,9 +125,8 @@ namespace android {
     private:
 
         static inline void initIfNeeded() {
-            if (!android_atomic_acquire_load(&sIsReady)) {
+            if (!android_atomic_acquire_load(&sIsReady))
                 init();
-            }
         }
 
         static void changeCallback();

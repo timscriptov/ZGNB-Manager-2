@@ -1,12 +1,10 @@
 #include "rar.hpp"
 
-
 static char LogName[NM];
 
 void InitLogOptions(char *LogName) {
     strcpy(::LogName, LogName);
 }
-
 
 #ifndef SILENT
 void Log(const char *ArcName, const char *Format, ...) {
@@ -18,5 +16,4 @@ void Log(const char *ArcName, const char *Format, ...) {
     eprintf("%s", Msg);
 }
 #endif
-
 

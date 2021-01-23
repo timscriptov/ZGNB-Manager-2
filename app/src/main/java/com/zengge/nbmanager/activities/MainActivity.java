@@ -83,6 +83,7 @@ import com.zengge.nbmanager.utils.DecompileFile;
 import com.zengge.nbmanager.utils.ExceptionHandler;
 import com.zengge.nbmanager.utils.FileUtil;
 import com.zengge.nbmanager.utils.FileUtils;
+import com.zengge.nbmanager.utils.FormatingCode;
 import com.zengge.nbmanager.utils.J2DMain;
 import com.zengge.nbmanager.utils.ScopedStorage;
 import com.zengge.nbmanager.utils.ZipExtract;
@@ -810,6 +811,10 @@ public class MainActivity extends AppCompatActivity {
         menu.add(Menu.NONE, R.string.cut, Menu.NONE, R.string.cut);
         menu.add(Menu.NONE, R.string.paste, Menu.NONE, R.string.paste);
         menu.add(Menu.NONE, R.string.permission, Menu.NONE, R.string.permission);
+        String extn = file.getName().substring(file.getName().lastIndexOf(".") + 1);
+        if(extn.equals("c") || extn.equals("cpp") || extn.equals("java") || extn.equals("h") || extn.equals("cs")
+                || extn.equals("hpp"))
+            menu.add(Menu.NONE, R.string.format_code, Menu.NONE, R.string.format_code);
     }
 
     @Override
@@ -854,6 +859,10 @@ public class MainActivity extends AppCompatActivity {
             case R.string.permission:
                 showPermissions();
                 break;
+            case R.string.format_code:
+                if(!FormatingCode.formattingCode(this,mCurrent.getPath())) Toast.makeText(this, "Failed to format code", Toast.LENGTH_LONG).show();
+                else Toast.makeText(this, "Succeeded formatting code", Toast.LENGTH_LONG).show();
+                return false;
         }
         return super.onOptionsItemSelected(item);
     }

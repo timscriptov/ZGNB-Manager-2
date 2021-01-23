@@ -64,7 +64,6 @@ void RawPrint(char *Msg, MESSAGE_TYPE MessageType) {
     }
 #ifdef _WIN_32
     CharToOem(Msg, Msg);
-
     char OutMsg[MaxMsgSize], *OutPos = OutMsg;
     for (int I = 0; Msg[I] != 0; I++) {
         if (Msg[I] == '\n' && (I == 0 || Msg[I - 1] != '\r'))
@@ -82,7 +81,6 @@ void RawPrint(char *Msg, MESSAGE_TYPE MessageType) {
     *OutPos = 0;
     strcpy(Msg, OutMsg);
 #endif
-
     OutFile.Write(Msg, strlen(Msg));
     //  OutFile.Flush();
 }
@@ -175,7 +173,6 @@ int Ask(const char *AskStr) {
     const int MaxItems = 10;
     char Item[MaxItems][40];
     int ItemKeyPos[MaxItems], NumItems = 0;
-
     for (const char *NextItem = AskStr; NextItem != NULL; NextItem = strchr(NextItem + 1, '_')) {
         char *CurItem = Item[NumItems];
         strncpyz(CurItem, NextItem + 1, ASIZE(Item[0]));
@@ -195,7 +192,6 @@ int Ask(const char *AskStr) {
         ItemKeyPos[NumItems] = KeyPos;
         NumItems++;
     }
-
     for (int I = 0; I < NumItems; I++) {
         eprintf(I == 0 ? (NumItems > 4 ? "\n" : " ") : ", ");
         int KeyPos = ItemKeyPos[I];

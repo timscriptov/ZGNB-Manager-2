@@ -210,7 +210,6 @@ void CryptData::SetCryptKeys(const char *Password, const byte *Salt, bool Encryp
 #endif
         return;
     }
-
     bool Cached = false;
     for (int I = 0; I < ASIZE(Cache); I++)
         if (strcmp(Cache[I].Password, Password) == 0 &&
@@ -222,7 +221,6 @@ void CryptData::SetCryptKeys(const char *Password, const byte *Salt, bool Encryp
             Cached = true;
             break;
         }
-
     if (!Cached) {
         wchar PswW[MAXPASSWORD];
         CharToWide(Password, PswW, MAXPASSWORD - 1);
@@ -236,7 +234,6 @@ void CryptData::SetCryptKeys(const char *Password, const byte *Salt, bool Encryp
         }
         hash_context c;
         hash_initial(&c);
-
         const int HashRounds = 0x40000;
         for (int I = 0; I < HashRounds; I++) {
             hash_process( &c, RawPsw, RawLength, HandsOffHash);
@@ -257,7 +254,6 @@ void CryptData::SetCryptKeys(const char *Password, const byte *Salt, bool Encryp
         for (int I = 0; I < 4; I++)
             for (int J = 0; J < 4; J++)
                 AESKey[I * 4 + J] = (byte)(digest[I] >> (J * 8));
-
         strcpy(Cache[CachePos].Password, Password);
         if ((Cache[CachePos].SaltPresent = (Salt != NULL)) == true)
             memcpy(Cache[CachePos].Salt, Salt, SALT_SIZE);

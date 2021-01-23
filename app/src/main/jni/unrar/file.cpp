@@ -59,7 +59,6 @@ bool File::Open(const char *Name, const wchar *NameW, bool OpenShared, bool Upda
         hNewFile = CreateFileW(NameW, Access, ShareMode, NULL, OPEN_EXISTING, Flags, NULL);
     else
         hNewFile = CreateFile(Name, Access, ShareMode, NULL, OPEN_EXISTING, Flags, NULL);
-
     if (hNewFile == BAD_HANDLE && GetLastError() == ERROR_FILE_NOT_FOUND)
         ErrorType = FILE_NOTFOUND;
 #else
@@ -76,11 +75,9 @@ bool File::Open(const char *Name, const wchar *NameW, bool OpenShared, bool Upda
 #else
     int handle = open(Name, flags);
 #ifdef LOCK_EX
-
 #ifdef _OSF_SOURCE
     extern "C" int flock(int, int);
 #endif
-
     if (!OpenShared && Update && handle >= 0 && flock(handle, LOCK_EX | LOCK_NB) == -1) {
         close(handle);
         return(false);
@@ -234,10 +231,8 @@ bool File::Rename(const char *NewName, const wchar *NewNameW) {
     bool Success = strcmp(FileName, NewName) == 0;
     if (Success && *FileNameW != 0 && *NullToEmpty(NewNameW) != 0)
         Success = strcmpw(FileNameW, NewNameW) == 0;
-
     if (!Success)
         Success = RenameFile(FileName, FileNameW, NewName, NewNameW);
-
     if (Success) {
         // renamed successfully, storing the new name
         strcpy(FileName, NewName);
@@ -314,7 +309,6 @@ void File::Write(const void *Data, size_t Size) {
 
 int File::Read(void *Data, size_t Size) {
     int64 FilePos = 0; //initialized only to suppress some compilers warning
-
     if (IgnoreReadErrors)
         FilePos = Tell();
     int ReadSize;
@@ -597,7 +591,6 @@ int64 File::Copy(File &Dest, int64 Length) {
     Array<char> Buffer(0x10000);
     int64 CopySize = 0;
     bool CopyAll = (Length == INT64NDF);
-
     while (CopyAll || Length > 0) {
         Wait();
         size_t SizeToRead = (!CopyAll && Length < (int64)Buffer.Size()) ? (size_t)Length : Buffer.Size();

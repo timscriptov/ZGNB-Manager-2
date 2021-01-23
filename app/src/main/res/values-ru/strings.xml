@@ -230,5 +230,6 @@
     <string name="image_viewer">Просмотр изображений</string>
     <string name="elf_editor">ELF редактор</string>
     <string name="arsc_editor">Arsc редактор</string>
+    <string name="format_code">Форматировать код</string>
 
 </resources>

@@ -29,15 +29,12 @@ using namespace android;
     z_stream zstream;
     int zerr;
     unsigned long compRemaining;
-
     assert(uncompressedLen >= 0);
     assert(compressedLen >= 0);
-
     readBuf = new unsigned char[kReadBufSize];
     if (readBuf == NULL)
         goto bail;
     compRemaining = compressedLen;
-
     /*
      * Initialize the zlib stream.
      */
@@ -50,7 +47,6 @@ using namespace android;
     zstream.next_out = (Bytef *) buf;
     zstream.avail_out = uncompressedLen;
     zstream.data_type = Z_UNKNOWN;
-
     /*
      * Use the undocumented "negative window bits" feature to tell zlib
      * that there's no zlib header waiting for it.
@@ -60,12 +56,10 @@ using namespace android;
         if (zerr == Z_VERSION_ERROR) {
             ALOGE("Installed zlib is not compatible with linked version (%s)\n",
                   ZLIB_VERSION);
-        } else {
+        } else
             ALOGE("Call to inflateInit2 failed (zerr=%d)\n", zerr);
-        }
         goto bail;
     }
-
     /*
      * Loop while we have data.
      */
@@ -77,50 +71,39 @@ using namespace android;
                       kReadBufSize : compRemaining;
             ALOGV("+++ reading %ld bytes (%ld left)\n",
                   getSize, compRemaining);
-
             int cc;
             do {
                 cc = read(fd, readBuf, getSize);
             } while(cc == -1L && errno == EINTR);
-
             //int cc = MYTEMP_FAILURE_RETRY(read(fd, readBuf, getSize));
-            if (cc < 0) {
+            if (cc < 0)
                 ALOGW("inflate read failed: %s", strerror(errno));
-            } else if (cc != (int) getSize) {
+            else if (cc != (int) getSize) {
                 ALOGW("inflate read failed (%d vs %ld)", cc, getSize);
                 goto z_bail;
             }
-
             compRemaining -= getSize;
-
             zstream.next_in = readBuf;
             zstream.avail_in = getSize;
         }
-
         /* uncompress the data */
         zerr = inflate(&zstream, Z_NO_FLUSH);
         if (zerr != Z_OK && zerr != Z_STREAM_END) {
             ALOGD("zlib inflate call failed (zerr=%d)\n", zerr);
             goto z_bail;
         }
-
         /* output buffer holds all, so no need to write the output */
     } while (zerr == Z_OK);
-
     assert(zerr == Z_STREAM_END);       /* other errors should've been caught */
-
     if ((long) zstream.total_out != uncompressedLen) {
         ALOGW("Size mismatch on inflated file (%ld vs %ld)\n",
               zstream.total_out, uncompressedLen);
         goto z_bail;
     }
-
     // success!
     result = true;
-
 z_bail:
     inflateEnd(&zstream);        /* free up any allocated structures */
-
 bail:
     delete[] readBuf;
     return result;
@@ -145,15 +128,12 @@ bail:
     z_stream zstream;
     int zerr;
     unsigned long compRemaining;
-
     assert(uncompressedLen >= 0);
     assert(compressedLen >= 0);
-
     readBuf = new unsigned char[kReadBufSize];
     if (readBuf == NULL)
         goto bail;
     compRemaining = compressedLen;
-
     /*
      * Initialize the zlib stream.
      */
@@ -166,7 +146,6 @@ bail:
     zstream.next_out = (Bytef *) buf;
     zstream.avail_out = uncompressedLen;
     zstream.data_type = Z_UNKNOWN;
-
     /*
      * Use the undocumented "negative window bits" feature to tell zlib
      * that there's no zlib header waiting for it.
@@ -176,62 +155,49 @@ bail:
         if (zerr == Z_VERSION_ERROR) {
             ALOGE("Installed zlib is not compatible with linked version (%s)\n",
                   ZLIB_VERSION);
-        } else {
+        } else
             ALOGE("Call to inflateInit2 failed (zerr=%d)\n", zerr);
-        }
         goto bail;
     }
-
     /*
      * Loop while we have data.
      */
     do {
         unsigned long getSize;
-
         /* read as much as we can */
         if (zstream.avail_in == 0) {
             getSize = (compRemaining > kReadBufSize) ?
                       kReadBufSize : compRemaining;
             ALOGV("+++ reading %ld bytes (%ld left)\n",
                   getSize, compRemaining);
-
             int cc = fread(readBuf, 1, getSize, fp);
             if (cc != (int) getSize) {
                 ALOGD("inflate read failed (%d vs %ld)\n",
                       cc, getSize);
                 goto z_bail;
             }
-
             compRemaining -= getSize;
-
             zstream.next_in = readBuf;
             zstream.avail_in = getSize;
         }
-
         /* uncompress the data */
         zerr = inflate(&zstream, Z_NO_FLUSH);
         if (zerr != Z_OK && zerr != Z_STREAM_END) {
             ALOGD("zlib inflate call failed (zerr=%d)\n", zerr);
             goto z_bail;
         }
-
         /* output buffer holds all, so no need to write the output */
     } while (zerr == Z_OK);
-
     assert(zerr == Z_STREAM_END);       /* other errors should've been caught */
-
     if ((long) zstream.total_out != uncompressedLen) {
         ALOGW("Size mismatch on inflated file (%ld vs %ld)\n",
               zstream.total_out, uncompressedLen);
         goto z_bail;
     }
-
     // success!
     result = true;
-
 z_bail:
     inflateEnd(&zstream);        /* free up any allocated structures */
-
 bail:
     delete[] readBuf;
     return result;
@@ -262,26 +228,22 @@ bail:
     int ic;
     int method, flags;
     int i;
-
     ic = getc(fp);
     if (ic != 0x1f || getc(fp) != 0x8b)
         return false;       // not gzip
     method = getc(fp);
     flags = getc(fp);
-
     /* quick sanity checks */
     if (method == EOF || flags == EOF)
         return false;
     if (method != ZipFileRO::kCompressDeflated)
         return false;
-
     /* skip over 4 bytes of mod time, 1 byte XFL, 1 byte OS */
     for (i = 0; i < 6; i++)
         (void) getc(fp);
     /* consume "extra" field, if present */
     if ((flags & FEXTRA) != 0) {
         int len;
-
         len = getc(fp);
         len |= getc(fp) << 8;
         while (len-- && getc(fp) != EOF)
@@ -304,24 +266,19 @@ bail:
         (void) getc(fp);
         (void) getc(fp);
     }
-
     if (feof(fp) || ferror(fp))
         return false;
-
     /* seek to the end; CRC and length are in the last 8 bytes */
     long curPosn = ftell(fp);
     unsigned char buf[8];
     fseek(fp, -8, SEEK_END);
     *pCompressedLen = ftell(fp) - curPosn;
-
     if (fread(buf, 1, 8, fp) != 8)
         return false;
     /* seek back to start of compressed data */
     fseek(fp, curPosn, SEEK_SET);
-
     *pCompressionMethod = method;
     *pCRC32 = ZipFileRO::get4LE(&buf[0]);
     *pUncompressedLen = ZipFileRO::get4LE(&buf[4]);
-
     return true;
 }

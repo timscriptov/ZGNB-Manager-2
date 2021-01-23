@@ -121,9 +121,8 @@ namespace android {
         if (mListener) {
             for (uint32_t i = 0; i < mCache.size(); i++) {
                 sp<Entry<K, V> > entry = mCache.valueAt(i);
-                if (mListener) {
+                if (mListener)
                     (*mListener)(entry->key, entry->value);
-                }
             }
         }
         mCache.clear();
@@ -155,16 +154,13 @@ namespace android {
             attachToCache(entry);
             return entry->value;
         }
-
         return mNullValue;
     }
 
     template<typename K, typename V>
     bool GenerationCache<K, V>::put(const K &key, const V &value) {
-        if (mMaxCapacity != kUnlimitedCapacity && mCache.size() >= mMaxCapacity) {
+        if (mMaxCapacity != kUnlimitedCapacity && mCache.size() >= mMaxCapacity)
             removeOldest();
-        }
-
         ssize_t index = mCache.indexOfKey(key);
         if (index < 0) {
             sp<Entry<K, V> > entry = new Entry<K, V>(key, value);
@@ -172,7 +168,6 @@ namespace android {
             attachToCache(entry);
             return true;
         }
-
         return false;
     }
 
@@ -183,16 +178,14 @@ namespace android {
             removeAt(index);
             return true;
         }
-
         return false;
     }
 
     template<typename K, typename V>
     void GenerationCache<K, V>::removeAt(ssize_t index) {
         sp<Entry<K, V> > entry = mCache.valueAt(index);
-        if (mListener) {
+        if (mListener)
             (*mListener)(entry->key, entry->value);
-        }
         mCache.removeItemsAt(index, 1);
         detachFromCache(entry);
     }
@@ -209,15 +202,14 @@ namespace android {
                   "with the given key, but we know it must be in there.  "
                   "Is the key comparator kaput?");
         }
-
         return false;
     }
 
     template<typename K, typename V>
     void GenerationCache<K, V>::attachToCache(const sp<Entry<K, V> > &entry) {
-        if (!mYoungest.get()) {
+        if (!mYoungest.get())
             mYoungest = mOldest = entry;
-        } else {
+        else {
             entry->parent = mYoungest;
             mYoungest->child = entry;
             mYoungest = entry;
@@ -226,18 +218,14 @@ namespace android {
 
     template<typename K, typename V>
     void GenerationCache<K, V>::detachFromCache(const sp<Entry<K, V> > &entry) {
-        if (entry->parent.get()) {
+        if (entry->parent.get())
             entry->parent->child = entry->child;
-        } else {
+        else
             mOldest = entry->child;
-        }
-
-        if (entry->child.get()) {
+        if (entry->child.get())
             entry->child->parent = entry->parent;
-        } else {
+        else
             mYoungest = entry->parent;
-        }
-
         entry->parent.clear();
         entry->child.clear();
     }

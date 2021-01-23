@@ -13,7 +13,6 @@ struct DataSet {
     DataSet(): Arc(&Cmd) {};
 };
 
-
 HANDLE PASCAL RAROpenArchive(struct RAROpenArchiveData *r) {
     RAROpenArchiveDataEx rx;
     memset(&rx, 0, sizeof(rx));
@@ -28,22 +27,18 @@ HANDLE PASCAL RAROpenArchive(struct RAROpenArchiveData *r) {
     return(hArc);
 }
 
-
 HANDLE PASCAL RAROpenArchiveEx(struct RAROpenArchiveDataEx *r) {
-    // try
-    // {
+
     r->OpenResult = 0;
     DataSet *Data = new DataSet;
     Data->Cmd.DllError = 0;
     Data->OpenMode = r->OpenMode;
     Data->Cmd.FileArgs->AddString("*");
-
     char an[NM];
     if (r->ArcName == NULL && r->ArcNameW != NULL) {
         WideToChar(r->ArcNameW, an, NM);
         r->ArcName = an;
     }
-
     Data->Cmd.AddArcName(r->ArcName, r->ArcNameW);
     Data->Cmd.Overwrite = OVERWRITE_ALL;
     Data->Cmd.VersionControl = 1;
@@ -73,14 +68,8 @@ HANDLE PASCAL RAROpenArchiveEx(struct RAROpenArchiveDataEx *r) {
         r->Flags |= 0x20;
     Data->Extract.ExtractArchiveInit(&Data->Cmd, Data->Arc);
     return((HANDLE)Data);
-    //  }
-    //  catch (int ErrCode)
-    // {
-    //    r->OpenResult=RarErrorToDll(ErrCode);
-    //    return(NULL);
-    // }
-}
 
+}
 
 int PASCAL RARCloseArchive(HANDLE hArcData) {
     DataSet *Data = (DataSet *)hArcData;
@@ -89,11 +78,9 @@ int PASCAL RARCloseArchive(HANDLE hArcData) {
     return(Success ? 0 : ERAR_ECLOSE);
 }
 
-
 int PASCAL RARReadHeader(HANDLE hArcData, struct RARHeaderData *D) {
     DataSet *Data = (DataSet *)hArcData;
-    //try
-    //{
+
     if ((Data->HeaderSize = (int)Data->Arc.SearchBlock(FILE_HEAD)) <= 0) {
         if (Data->Arc.Volume && Data->Arc.GetHeaderType() == ENDARC_HEAD &&
                 (Data->Arc.EndArcHead.Flags & EARC_NEXT_VOLUME))
@@ -125,19 +112,13 @@ int PASCAL RARReadHeader(HANDLE hArcData, struct RARHeaderData *D) {
     D->FileAttr = Data->Arc.NewLhd.FileAttr;
     D->CmtSize = 0;
     D->CmtState = 0;
-    //}
-    // catch (int ErrCode)
-    //{
-    // return(RarErrorToDll(ErrCode));
-    //}
+
     return(0);
 }
 
-
 int PASCAL RARReadHeaderEx(HANDLE hArcData, struct RARHeaderDataEx *D) {
     DataSet *Data = (DataSet *)hArcData;
-    //try
-    //{
+
     if ((Data->HeaderSize = (int)Data->Arc.SearchBlock(FILE_HEAD)) <= 0) {
         if (Data->Arc.Volume && Data->Arc.GetHeaderType() == ENDARC_HEAD &&
                 (Data->Arc.EndArcHead.Flags & EARC_NEXT_VOLUME))
@@ -188,19 +169,13 @@ int PASCAL RARReadHeaderEx(HANDLE hArcData, struct RARHeaderDataEx *D) {
     D->FileAttr = Data->Arc.NewLhd.FileAttr;
     D->CmtSize = 0;
     D->CmtState = 0;
-    //  }
-    // catch (int ErrCode)
-    //{
-    //  return(RarErrorToDll(ErrCode));
-    // }
+
     return(0);
 }
 
-
 int PASCAL ProcessFile(HANDLE hArcData, int Operation, char *DestPath, char *DestName, wchar *DestPathW, wchar *DestNameW) {
     DataSet *Data = (DataSet *)hArcData;
-    //try
-    //{
+
     Data->Cmd.DllError = 0;
     if (Data->OpenMode == RAR_OM_LIST || Data->OpenMode == RAR_OM_LIST_INCSPLIT ||
             Operation == RAR_SKIP && !Data->Arc.Solid) {
@@ -216,7 +191,6 @@ int PASCAL ProcessFile(HANDLE hArcData, int Operation, char *DestPath, char *Des
         Data->Arc.SeekToNext();
     } else {
         Data->Cmd.DllOpMode = Operation;
-
         if (DestPath != NULL || DestName != NULL) {
 #ifdef _WIN_32
             OemToChar(NullToEmpty(DestPath), Data->Cmd.ExtrPath);
@@ -233,61 +207,48 @@ int PASCAL ProcessFile(HANDLE hArcData, int Operation, char *DestPath, char *Des
             *Data->Cmd.ExtrPath = 0;
             *Data->Cmd.DllDestName = 0;
         }
-
         if (DestPathW != NULL || DestNameW != NULL) {
             strncpyw(Data->Cmd.ExtrPathW, NullToEmpty(DestPathW), NM - 2);
             AddEndSlash(Data->Cmd.ExtrPathW);
             strncpyw(Data->Cmd.DllDestNameW, NullToEmpty(DestNameW), NM - 1);
-
             if (*Data->Cmd.DllDestNameW != 0 && *Data->Cmd.DllDestName == 0)
                 WideToChar(Data->Cmd.DllDestNameW, Data->Cmd.DllDestName);
         } else {
             *Data->Cmd.ExtrPathW = 0;
             *Data->Cmd.DllDestNameW = 0;
         }
-
         strcpy(Data->Cmd.Command, Operation == RAR_EXTRACT ? "X" : "T");
         Data->Cmd.Test = Operation != RAR_EXTRACT;
         bool Repeat = false;
         Data->Extract.ExtractCurrentFile(&Data->Cmd, Data->Arc, Data->HeaderSize, Repeat);
-
         while (Data->Arc.ReadHeader() != 0 && Data->Arc.GetHeaderType() == NEWSUB_HEAD) {
             Data->Extract.ExtractCurrentFile(&Data->Cmd, Data->Arc, Data->HeaderSize, Repeat);
             Data->Arc.SeekToNext();
         }
         Data->Arc.Seek(Data->Arc.CurBlockPos, SEEK_SET);
     }
-    //}
-    //catch (int ErrCode)
-    //{
-    // return(RarErrorToDll(ErrCode));
-    //}
+
     return(Data->Cmd.DllError);
 }
-
 
 int PASCAL RARProcessFile(HANDLE hArcData, int Operation, char *DestPath, char *DestName) {
     return(ProcessFile(hArcData, Operation, DestPath, DestName, NULL, NULL));
 }
 
-
 int PASCAL RARProcessFileW(HANDLE hArcData, int Operation, wchar *DestPath, wchar *DestName) {
     return(ProcessFile(hArcData, Operation, NULL, NULL, DestPath, DestName));
 }
-
 
 void PASCAL RARSetChangeVolProc(HANDLE hArcData, CHANGEVOLPROC ChangeVolProc) {
     DataSet *Data = (DataSet *)hArcData;
     Data->Cmd.ChangeVolProc = ChangeVolProc;
 }
 
-
 void PASCAL RARSetCallback(HANDLE hArcData, UNRARCALLBACK Callback, LPARAM UserData) {
     DataSet *Data = (DataSet *)hArcData;
     Data->Cmd.Callback = Callback;
     Data->Cmd.UserData = UserData;
 }
-
 
 void PASCAL RARSetProcessDataProc(HANDLE hArcData, PROCESSDATAPROC ProcessDataProc) {
     DataSet *Data = (DataSet *)hArcData;
@@ -297,7 +258,6 @@ void PASCAL RARSetProcessDataProc(HANDLE hArcData, PROCESSDATAPROC ProcessDataPr
 int PASCAL RARGetDllVersion() {
     return(RAR_DLL_VERSION);
 }
-
 
 static int RarErrorToDll(int ErrCode) {
     switch(ErrCode) {

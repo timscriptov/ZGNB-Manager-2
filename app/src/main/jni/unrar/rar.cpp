@@ -5,23 +5,17 @@ int main(int argc, char *argv[]) {
 #ifdef _UNIX
     setlocale(LC_ALL, "");
 #endif
-
 #if defined(_EMX) && !defined(_DJGPP)
     uni_init(0);
 #endif
-
 #if !defined(_SFX_RTL_) && !defined(_WIN_32)
     setbuf(stdout, NULL);
 #endif
-
 #if !defined(SFX_MODULE) && defined(_EMX)
     EnumConfigPaths(argv[0], -1);
 #endif
-
     ErrHandler.SetSignalHandlers(true);
-
     RARInitData();
-
 #ifdef SFX_MODULE
     char ModuleName[NM];
 #ifdef _WIN_32
@@ -30,22 +24,16 @@ int main(int argc, char *argv[]) {
     strcpy(ModuleName, argv[0]);
 #endif
 #endif
-
 #ifdef _WIN_32
     SetErrorMode(SEM_NOALIGNMENTFAULTEXCEPT | SEM_FAILCRITICALERRORS | SEM_NOOPENFILEERRORBOX);
-
-
 #endif
-
 #if defined(_WIN_32) && !defined(SFX_MODULE) && !defined(SHELL_EXT)
     bool ShutdownOnClose;
 #endif
-
 #ifdef ALLOW_EXCEPTIONS
     try
 #endif
     {
-
         CommandData Cmd;
 #ifdef SFX_MODULE
         strcpy(Cmd.Command, "X");
@@ -84,16 +72,13 @@ int main(int argc, char *argv[]) {
             Cmd.ParseArg(argv[I], NULL);
 #endif
         Cmd.ParseDone();
-
 #if defined(_WIN_32) && !defined(SFX_MODULE) && !defined(SHELL_EXT)
         ShutdownOnClose = Cmd.Shutdown;
 #endif
-
         InitConsoleOptions(Cmd.MsgStream, Cmd.Sound);
         InitLogOptions(Cmd.LogName);
         ErrHandler.SetSilent(Cmd.AllYes || Cmd.MsgStream == MSG_NULL);
         ErrHandler.SetShutdown(Cmd.Shutdown);
-
         Cmd.OutTitle();
         Cmd.ProcessCommand();
     }
@@ -124,5 +109,4 @@ int main(int argc, char *argv[]) {
     return(ErrHandler.GetErrorCode());
 }
 #endif
-
 

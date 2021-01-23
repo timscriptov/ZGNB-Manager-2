@@ -48,9 +48,8 @@ namespace android {
     VectorImpl::VectorImpl(const VectorImpl &rhs)
         :   mStorage(rhs.mStorage), mCount(rhs.mCount),
             mFlags(rhs.mFlags), mItemSize(rhs.mItemSize) {
-        if (mStorage) {
+        if (mStorage)
             SharedBuffer::bufferFromData(mStorage)->acquire();
-        }
     }
 
     VectorImpl::~VectorImpl() {
@@ -94,9 +93,8 @@ namespace android {
     }
 
     size_t VectorImpl::capacity() const {
-        if (mStorage) {
+        if (mStorage)
             return SharedBuffer::bufferFromData(mStorage)->size() / mItemSize;
-        }
         return 0;
     }
 
@@ -112,9 +110,8 @@ namespace android {
         if (index > size())
             return BAD_INDEX;
         void *where = _grow(index, length);
-        if (where) {
+        if (where)
             _do_copy(where, array, length);
-        }
         return where ? index : (ssize_t)NO_MEMORY;
     }
 
@@ -131,11 +128,10 @@ namespace android {
             return BAD_INDEX;
         void *where = _grow(index, numItems);
         if (where) {
-            if (item) {
+            if (item)
                 _do_splat(where, item, numItems);
-            } else {
+            else
                 _do_construct(where, numItems);
-            }
         }
         return where ? index : (ssize_t)NO_MEMORY;
     }
@@ -161,7 +157,6 @@ namespace android {
                 void *item = reinterpret_cast<char *>(array) + mItemSize * (i);
                 void *curr = reinterpret_cast<char *>(array) + mItemSize * (i - 1);
                 if (cmp(curr, item, state) > 0) {
-
                     if (!temp) {
                         // we're going to have to modify the array...
                         array = editArrayImpl();
@@ -170,12 +165,9 @@ namespace android {
                         if (!temp) return NO_MEMORY;
                         item = reinterpret_cast<char *>(array) + mItemSize * (i);
                         curr = reinterpret_cast<char *>(array) + mItemSize * (i - 1);
-                    } else {
+                    } else
                         _do_destroy(temp, 1);
-                    }
-
                     _do_copy(temp, item, 1);
-
                     ssize_t j = i - 1;
                     void *next = reinterpret_cast<char *>(array) + mItemSize * (i);
                     do {
@@ -185,13 +177,11 @@ namespace android {
                         --j;
                         curr = reinterpret_cast<char *>(array) + mItemSize * (j);
                     } while (j >= 0 && (cmp(curr, temp, state) > 0));
-
                     _do_destroy(next, 1);
                     _do_copy(next, temp, 1);
                 }
                 i++;
             }
-
             if (temp) {
                 _do_destroy(temp, 1);
                 free(temp);
@@ -228,21 +218,17 @@ namespace android {
     ssize_t VectorImpl::replaceAt(const void *prototype, size_t index) {
         //   ALOG_ASSERT(index<size(),
         //       "[%p] replace: index=%d, size=%d", this, (int)index, (int)size());
-
-        if (index >= size()) {
+        if (index >= size())
             return BAD_INDEX;
-        }
-
         void *item = editItemLocation(index);
         if (item != prototype) {
             if (item == 0)
                 return NO_MEMORY;
             _do_destroy(item, 1);
-            if (prototype == 0) {
+            if (prototype == 0)
                 _do_construct(item, 1);
-            } else {
+            else
                 _do_copy(item, prototype, 1);
-            }
         }
         return ssize_t(index);
     }
@@ -251,7 +237,6 @@ namespace android {
         //  ALOG_ASSERT((index+count)<=size(),
         //      "[%p] remove: index=%d, count=%d, size=%d",
         //             this, (int)index, (int)count, (int)size());
-
         if ((index + count) > size())
             return BAD_VALUE;
         _shrink(index, count);
@@ -272,12 +257,10 @@ namespace android {
         //  ALOG_ASSERT(index<capacity(),
         //      "[%p] editItemLocation: index=%d, capacity=%d, count=%d",
         //     this, (int)index, (int)capacity(), (int)mCount);
-
         if (index < capacity()) {
             void *buffer = editArrayImpl();
-            if (buffer) {
+            if (buffer)
                 return reinterpret_cast<char *>(buffer) + index * mItemSize;
-            }
         }
         return 0;
     }
@@ -286,12 +269,10 @@ namespace android {
         //   ALOG_ASSERT(index<capacity(),
         //       "[%p] itemLocation: index=%d, capacity=%d, count=%d",
         //      this, (int)index, (int)capacity(), (int)mCount);
-
         if (index < capacity()) {
             const  void *buffer = arrayImpl();
-            if (buffer) {
+            if (buffer)
                 return reinterpret_cast<const char *>(buffer) + index * mItemSize;
-            }
         }
         return 0;
     }
@@ -309,9 +290,8 @@ namespace android {
             _do_copy(array, mStorage, size());
             release_storage();
             mStorage = const_cast<void *>(array);
-        } else {
+        } else
             return NO_MEMORY;
-        }
         return new_capacity;
     }
 
@@ -328,11 +308,9 @@ namespace android {
     void *VectorImpl::_grow(size_t where, size_t amount) {
         //    ALOGV("_grow(this=%p, where=%d, amount=%d) count=%d, capacity=%d",
         //        this, (int)where, (int)amount, (int)mCount, (int)capacity());
-
         //   ALOG_ASSERT(where <= mCount,
         //           "[%p] _grow: where=%d, amount=%d, count=%d",
         //           this, (int)where, (int)amount, (int)mCount); // caller already checked
-
         const size_t new_size = mCount + amount;
         if (capacity() < new_size) {
             const size_t new_capacity = max(kMinVectorCapacity, ((new_size * 3) + 1) / 2);
@@ -348,9 +326,8 @@ namespace android {
                 SharedBuffer *sb = SharedBuffer::alloc(new_capacity * mItemSize);
                 if (sb) {
                     void *array = sb->data();
-                    if (where != 0) {
+                    if (where != 0)
                         _do_copy(array, mStorage, where);
-                    }
                     if (where != mCount) {
                         const void *from = reinterpret_cast<const uint8_t *>(mStorage) + where * mItemSize;
                         void *dest = reinterpret_cast<uint8_t *>(array) + (where + amount) * mItemSize;
@@ -376,14 +353,11 @@ namespace android {
     void VectorImpl::_shrink(size_t where, size_t amount) {
         if (!mStorage)
             return;
-
         //    ALOGV("_shrink(this=%p, where=%d, amount=%d) count=%d, capacity=%d",
         //        this, (int)where, (int)amount, (int)mCount, (int)capacity());
-
         //   ALOG_ASSERT(where + amount <= mCount,
         //           "[%p] _shrink: where=%d, amount=%d, count=%d",
         //           this, (int)where, (int)amount, (int)mCount); // caller already checked
-
         const size_t new_size = mCount - amount;
         if (new_size * 3 < capacity()) {
             const size_t new_capacity = max(kMinVectorCapacity, new_size * 2);
@@ -398,9 +372,8 @@ namespace android {
                 SharedBuffer *sb = SharedBuffer::alloc(new_capacity * mItemSize);
                 if (sb) {
                     void *array = sb->data();
-                    if (where != 0) {
+                    if (where != 0)
                         _do_copy(array, mStorage, where);
-                    }
                     if (where != new_size) {
                         const void *from = reinterpret_cast<const uint8_t *>(mStorage) + (where + amount) * mItemSize;
                         void *dest = reinterpret_cast<uint8_t *>(array) + where * mItemSize;
@@ -427,23 +400,20 @@ namespace android {
     }
 
     void VectorImpl::_do_construct(void *storage, size_t num) const {
-        if (!(mFlags & HAS_TRIVIAL_CTOR)) {
+        if (!(mFlags & HAS_TRIVIAL_CTOR))
             do_construct(storage, num);
-        }
     }
 
     void VectorImpl::_do_destroy(void *storage, size_t num) const {
-        if (!(mFlags & HAS_TRIVIAL_DTOR)) {
+        if (!(mFlags & HAS_TRIVIAL_DTOR))
             do_destroy(storage, num);
-        }
     }
 
     void VectorImpl::_do_copy(void *dest, const void *from, size_t num) const {
-        if (!(mFlags & HAS_TRIVIAL_COPY)) {
+        if (!(mFlags & HAS_TRIVIAL_COPY))
             do_copy(dest, from, num);
-        } else {
+        else
             memcpy(dest, from, num * itemSize());
-        }
     }
 
     void VectorImpl::_do_splat(void *dest, const void *item, size_t num) const {
@@ -509,11 +479,10 @@ namespace android {
             if (c == 0) {
                 err = l = mid;
                 break;
-            } else if (c < 0) {
+            } else if (c < 0)
                 l = mid + 1;
-            } else {
+            else
                 h = mid - 1;
-            }
         }
         if (order) *order = l;
         return err;
@@ -522,11 +491,10 @@ namespace android {
     ssize_t SortedVectorImpl::add(const void *item) {
         size_t order;
         ssize_t index = _indexOrderOf(item, &order);
-        if (index < 0) {
+        if (index < 0)
             index = VectorImpl::insertAt(item, order, 1);
-        } else {
+        else
             index = VectorImpl::replaceAt(item, index);
-        }
         return index;
     }
 
@@ -538,9 +506,8 @@ namespace android {
             size_t s = vector.size();
             for (size_t i = 0 ; i < s ; i++) {
                 ssize_t err = add( reinterpret_cast<const char *>(buffer) + i * is );
-                if (err < 0) {
+                if (err < 0)
                     return err;
-                }
             }
         }
         return NO_ERROR;
@@ -551,11 +518,11 @@ namespace android {
         ssize_t err = NO_ERROR;
         if (!vector.isEmpty()) {
             // first take care of the case where the vectors are sorted together
-            if (do_compare(vector.itemLocation(vector.size() - 1), arrayImpl()) <= 0) {
+            if (do_compare(vector.itemLocation(vector.size() - 1), arrayImpl()) <= 0)
                 err = VectorImpl::insertVectorAt(static_cast<const VectorImpl &>(vector), 0);
-            } else if (do_compare(vector.arrayImpl(), itemLocation(size() - 1)) >= 0) {
+            else if (do_compare(vector.arrayImpl(), itemLocation(size() - 1)) >= 0)
                 err = VectorImpl::appendVector(static_cast<const VectorImpl &>(vector));
-            } else {
+            else {
                 // this could be made a little better
                 err = merge(static_cast<const VectorImpl &>(vector));
             }
@@ -565,9 +532,8 @@ namespace android {
 
     ssize_t SortedVectorImpl::remove(const void *item) {
         ssize_t i = indexOf(item);
-        if (i >= 0) {
+        if (i >= 0)
             VectorImpl::removeItemsAt(i, 1);
-        }
         return i;
     }
 

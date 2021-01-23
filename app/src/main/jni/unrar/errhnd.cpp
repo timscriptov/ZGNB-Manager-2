@@ -162,9 +162,8 @@ void ErrorHandler::CreateErrorMsg(const char *ArcName, const char *FileName) {
             GetCurrentDirectory(sizeof(CurDir), CurDir);
             NameLength += strlen(CurDir) + 1;
         }
-        if (NameLength > MAX_PATH) {
+        if (NameLength > MAX_PATH)
             Log(ArcName && *ArcName ? ArcName : NULL, St(MMaxPathLimit), MAX_PATH);
-        }
     }
 #endif
     SysErrMsg();
@@ -324,13 +323,11 @@ void ErrorHandler::SysErrMsg() {
     }
     LocalFree( lpMsgBuf );
 #endif
-
 #if defined(_UNIX) || defined(_EMX)
     char *err = strerror(errno);
     if (err != NULL)
         Log(NULL, "\n%s", err);
 #endif
-
 #endif
 }
 

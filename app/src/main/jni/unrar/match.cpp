@@ -34,9 +34,7 @@ inline uint touppercw(uint ch, bool ForceCase) {
 
 bool CmpName(char *Wildcard, char *Name, int CmpMode) {
     bool ForceCase = (CmpMode & MATCH_FORCECASESENSITIVE) != 0;
-
     CmpMode &= MATCH_MODEMASK;
-
     if (CmpMode != MATCH_NAMES) {
         size_t WildLength = strlen(Wildcard);
         if (CmpMode != MATCH_EXACTPATH && mstrnicompc(Wildcard, Name, WildLength, ForceCase) == 0) {
@@ -45,7 +43,6 @@ bool CmpName(char *Wildcard, char *Name, int CmpMode) {
             char NextCh = Name[WildLength];
             if (NextCh == '\\' || NextCh == '/' || NextCh == 0)
                 return(true);
-
             // Nothing more to compare for MATCH_SUBPATHONLY.
             if (CmpMode == MATCH_SUBPATHONLY)
                 return(false);
@@ -53,7 +50,6 @@ bool CmpName(char *Wildcard, char *Name, int CmpMode) {
         char Path1[NM], Path2[NM];
         GetFilePath(Wildcard, Path1, ASIZE(Path1));
         GetFilePath(Name, Path2, ASIZE(Path1));
-
         if (CmpMode == MATCH_EXACTPATH && mstricompc(Path1, Path2, ForceCase) != 0)
             return(false);
         if (CmpMode == MATCH_SUBPATH || CmpMode == MATCH_WILDSUBPATH)
@@ -67,15 +63,12 @@ bool CmpName(char *Wildcard, char *Name, int CmpMode) {
     }
     char *Name1 = PointToName(Wildcard);
     char *Name2 = PointToName(Name);
-
     // Always return false for RAR temporary files to exclude them
     // from archiving operations.
     if (mstrnicompc("__rar_", Name2, 6, false) == 0)
         return(false);
-
     if (CmpMode == MATCH_EXACT)
         return(mstricompc(Name1, Name2, ForceCase) == 0);
-
     return(match(Name1, Name2, ForceCase));
 }
 
@@ -83,9 +76,7 @@ bool CmpName(char *Wildcard, char *Name, int CmpMode) {
 #ifndef SFX_MODULE
 bool CmpName(wchar *Wildcard, wchar *Name, int CmpMode) {
     bool ForceCase = (CmpMode & MATCH_FORCECASESENSITIVE) != 0;
-
     CmpMode &= MATCH_MODEMASK;
-
     if (CmpMode != MATCH_NAMES) {
         size_t WildLength = strlenw(Wildcard);
         if (CmpMode != MATCH_EXACTPATH && mstrnicompcw(Wildcard, Name, WildLength, ForceCase) == 0) {
@@ -94,7 +85,6 @@ bool CmpName(wchar *Wildcard, wchar *Name, int CmpMode) {
             wchar NextCh = Name[WildLength];
             if (NextCh == L'\\' || NextCh == L'/' || NextCh == 0)
                 return(true);
-
             // Nothing more to compare for MATCH_SUBPATHONLY.
             if (CmpMode == MATCH_SUBPATHONLY)
                 return(false);
@@ -102,7 +92,6 @@ bool CmpName(wchar *Wildcard, wchar *Name, int CmpMode) {
         wchar Path1[NM], Path2[NM];
         GetFilePath(Wildcard, Path1, ASIZE(Path1));
         GetFilePath(Name, Path2, ASIZE(Path2));
-
         if (CmpMode == MATCH_EXACTPATH && mstricompcw(Path1, Path2, ForceCase) != 0)
             return(false);
         if (CmpMode == MATCH_SUBPATH || CmpMode == MATCH_WILDSUBPATH)
@@ -116,15 +105,12 @@ bool CmpName(wchar *Wildcard, wchar *Name, int CmpMode) {
     }
     wchar *Name1 = PointToName(Wildcard);
     wchar *Name2 = PointToName(Name);
-
     // Always return false for RAR temporary files to exclude them
     // from archiving operations.
     if (mstrnicompcw(L"__rar_", Name2, 6, false) == 0)
         return(false);
-
     if (CmpMode == MATCH_EXACT)
         return(mstricompcw(Name1, Name2, ForceCase) == 0);
-
     return(match(Name1, Name2, ForceCase));
 }
 #endif
@@ -156,7 +142,6 @@ bool match(char *pattern, char *string, bool ForceCase) {
                         return(mstricompc(pattern + 1, string + 1, ForceCase) == 0);
                 }
             }
-
             while (*string)
                 if (match(pattern, string++, ForceCase))
                     return(true);
@@ -202,7 +187,6 @@ bool match(wchar *pattern, wchar *string, bool ForceCase) {
                         return(mstricompcw(pattern + 1, string + 1, ForceCase) == 0);
                 }
             }
-
             while (*string)
                 if (match(pattern, string++, ForceCase))
                     return(true);

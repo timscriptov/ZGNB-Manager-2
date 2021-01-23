@@ -16,7 +16,6 @@
 #define ENABLE_BAD_ALLOC
 #endif
 
-
 #if defined(_WIN_32) || defined(_EMX)
 
 #define LITTLE_ENDIAN
@@ -30,7 +29,6 @@
 #define WINVER 0x0400
 #define _WIN32_WINNT 0x0300
 
-
 #define WIN32_LEAN_AND_MEAN
 
 #include <windows.h>
@@ -41,17 +39,15 @@
 #include <shlobj.h>
 #include <winioctl.h>
 
+#endif
 
-#endif // _WIN_CE
-
-
-#endif // _WIN_32
+#endif
 
 #ifndef _WIN_CE
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <dos.h>
-#endif // _WIN_CE
+#endif
 
 #if !defined(_EMX) && !defined(_MSC_VER) && !defined(_WIN_CE)
 #include <dir.h>
@@ -65,11 +61,11 @@
 #endif
 #else
 #include <dirent.h>
-#endif // _MSC_VER
+#endif
 
 #ifndef _WIN_CE
 #include <share.h>
-#endif // _WIN_CE
+#endif
 
 #if defined(ENABLE_BAD_ALLOC) && !defined(_WIN_CE)
 #include <new.h>
@@ -108,17 +104,10 @@
 #include <signal.h>
 #endif
 
-/*
-#ifdef _WIN_32
-#pragma hdrstop
-#endif // _WIN_32
-*/
-
 #define ENABLE_ACCESS
 
 #define DefConfigName  "rar.ini"
 #define DefLogName     "rar.log"
-
 
 #define PATHDIVIDER  "\\"
 #define PATHDIVIDERW L"\\"
@@ -189,7 +178,6 @@
 #define DefConfigName  ".rarrc"
 #define DefLogName     ".rarlog"
 
-
 #define PATHDIVIDER  "/"
 #define PATHDIVIDERW L"/"
 #define CPATHDIVIDER '/'
@@ -235,7 +223,7 @@ typedef const char *MSGID;
 #elif defined(BYTE_ORDER) && BYTE_ORDER == BIG_ENDIAN
 #define BIG_ENDIAN
 #else
-//#error "Neither LITTLE_ENDIAN nor BIG_ENDIAN are defined. Define one of them."
+
 #define LITTLE_ENDIAN
 #endif
 #endif
@@ -251,14 +239,13 @@ typedef const char *MSGID;
 #endif
 
 #if !defined(BIG_ENDIAN) && !defined(_WIN_CE) && defined(_WIN_32)
-/* allow not aligned integer access, increases speed in some operations */
+
 #define ALLOW_NOT_ALIGNED_INT
 #endif
 
 #if defined(__sparc) || defined(sparc) || defined(__sparcv9)
-/* prohibit not aligned access to data structures in text comression
-   algorithm, increases memory requirements */
+
 #define STRICT_ALIGNMENT_REQUIRED
 #endif
 
-#endif // _RAR_OS_
+#endif

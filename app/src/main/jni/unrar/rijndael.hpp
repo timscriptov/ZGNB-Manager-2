@@ -15,7 +15,7 @@
 
 class Rijndael {
 public:
-    enum Direction { Encrypt , Decrypt };
+    enum Direction { Encrypt, Decrypt };
 private:
     void keySched(byte key[_MAX_KEY_COLUMNS][4]);
     void keyEncToDec();

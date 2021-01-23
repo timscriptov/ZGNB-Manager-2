@@ -111,7 +111,6 @@ static __inline__ void  mutex_lock(mutex_t  *lock) {
         lock->init = 2;
     } else while (lock->init != 2)
             Sleep(10);
-
     EnterCriticalSection(lock->lock);
 }
 

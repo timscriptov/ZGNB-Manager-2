@@ -4,7 +4,6 @@ void Unpack::CopyString20(unsigned int Length, unsigned int Distance) {
     LastDist = OldDist[OldDistPtr++ & 3] = Distance;
     LastLength = Length;
     DestUnpSize -= Length;
-
     unsigned int DestPtr = UnpPtr - Distance;
     if (DestPtr < MAXWINSIZE - 300 && UnpPtr < MAXWINSIZE - 300) {
         Window[UnpPtr++] = Window[DestPtr++];
@@ -29,7 +28,6 @@ void Unpack::Unpack20(bool Solid) {
     static unsigned char SDDecode[] = {0, 4, 8, 16, 32, 64, 128, 192};
     static unsigned char SDBits[] =  {2, 2, 3, 4, 5, 6,  6,  6};
     unsigned int Bits;
-
     if (Suspended)
         UnpPtr = WrPtr;
     else {
@@ -41,10 +39,8 @@ void Unpack::Unpack20(bool Solid) {
                 return;
         --DestUnpSize;
     }
-
     while (DestUnpSize >= 0) {
         UnpPtr &= MAXWINMASK;
-
         if (InAddr > ReadTop - 30)
             if (!UnpReadBuf())
                 break;
@@ -55,7 +51,6 @@ void Unpack::Unpack20(bool Solid) {
         }
         if (UnpAudioBlock) {
             int AudioNumber = DecodeNumber((struct Decode *)&MD[UnpCurChannel]);
-
             if (AudioNumber == 256) {
                 if (!ReadTables20())
                     break;
@@ -67,7 +62,6 @@ void Unpack::Unpack20(bool Solid) {
             --DestUnpSize;
             continue;
         }
-
         int Number = DecodeNumber((struct Decode *)&LD);
         if (Number < 256) {
             Window[UnpPtr++] = (byte)Number;
@@ -80,20 +74,17 @@ void Unpack::Unpack20(bool Solid) {
                 Length += getbits() >> (16 - Bits);
                 addbits(Bits);
             }
-
             int DistNumber = DecodeNumber((struct Decode *)&DD);
             unsigned int Distance = DDecode[DistNumber] + 1;
             if ((Bits = DBits[DistNumber]) > 0) {
                 Distance += getbits() >> (16 - Bits);
                 addbits(Bits);
             }
-
             if (Distance >= 0x2000) {
                 Length++;
                 if (Distance >= 0x40000L)
                     Length++;
             }
-
             CopyString20(Length, Distance);
             continue;
         }
@@ -149,11 +140,9 @@ bool Unpack::ReadTables20() {
             return(false);
     unsigned int BitField = getbits();
     UnpAudioBlock = (BitField & 0x8000);
-
     if (!(BitField & 0x4000))
         memset(UnpOldTable20, 0, sizeof(UnpOldTable20));
     addbits(2);
-
     if (UnpAudioBlock) {
         UnpChannels = ((BitField >> 12) & 3) + 1;
         if (UnpCurChannel >= UnpChannels)
@@ -162,7 +151,6 @@ bool Unpack::ReadTables20() {
         TableSize = MC20 * UnpChannels;
     } else
         TableSize = NC20 + DC20 + RC20;
-
     for (I = 0; I < BC20; I++) {
         BitLength[I] = (byte)(getbits() >> 12);
         addbits(4);
@@ -225,7 +213,6 @@ void Unpack::UnpInitData20(int Solid) {
     if (!Solid) {
         UnpAudioBlock = UnpChannelDelta = UnpCurChannel = 0;
         UnpChannels = 1;
-
         memset(AudV, 0, sizeof(AudV));
         memset(UnpOldTable20, 0, sizeof(UnpOldTable20));
         memset(MD, 0, sizeof(MD));
@@ -242,11 +229,8 @@ byte Unpack::DecodeAudio(int Delta) {
     V->D1 = V->LastDelta;
     int PCh = 8 * V->LastChar + V->K1 * V->D1 + V->K2 * V->D2 + V->K3 * V->D3 + V->K4 * V->D4 + V->K5 * UnpChannelDelta;
     PCh = (PCh >> 3) & 0xFF;
-
     unsigned int Ch = PCh - Delta;
-
     int D = ((signed char)Delta) << 3;
-
     V->Dif[0] += abs(D);
     V->Dif[1] += abs(D - V->D1);
     V->Dif[2] += abs(D + V->D1);
@@ -258,10 +242,8 @@ byte Unpack::DecodeAudio(int Delta) {
     V->Dif[8] += abs(D + V->D4);
     V->Dif[9] += abs(D - UnpChannelDelta);
     V->Dif[10] += abs(D + UnpChannelDelta);
-
     UnpChannelDelta = V->LastDelta = (signed char)(Ch - V->LastChar);
     V->LastChar = Ch;
-
     if ((V->ByteCount & 0x1F) == 0) {
         unsigned int MinDif = V->Dif[0], NumMinDif = 0;
         V->Dif[0] = 0;

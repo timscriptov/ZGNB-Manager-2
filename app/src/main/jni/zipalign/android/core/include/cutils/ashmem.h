@@ -1,12 +1,3 @@
-/* cutils/ashmem.h
- **
- ** Copyright 2008 The Android Open Source Project
- **
- ** This file is dual licensed.  It may be redistributed and/or modified
- ** under the terms of the Apache 2.0 License OR version 2 of the GNU
- ** General Public License.
- */
-
 #ifndef _CUTILS_ASHMEM_H
 #define _CUTILS_ASHMEM_H
 
@@ -26,20 +17,18 @@ int ashmem_get_size_region(int fd);
 }
 #endif
 
-#ifndef __ASHMEMIOC	/* in case someone included <linux/ashmem.h> too */
+#ifndef __ASHMEMIOC
 
 #define ASHMEM_NAME_LEN		256
 
 #define ASHMEM_NAME_DEF		"dev/ashmem"
 
-/* Return values from ASHMEM_PIN: Was the mapping purged while unpinned? */
 #define ASHMEM_NOT_PURGED	0
 #define ASHMEM_WAS_PURGED	1
 
-/* Return values from ASHMEM_UNPIN: Is the mapping now pinned or unpinned? */
 #define ASHMEM_IS_UNPINNED	0
 #define ASHMEM_IS_PINNED	1
 
-#endif	/* ! __ASHMEMIOC */
+#endif
 
-#endif	/* _CUTILS_ASHMEM_H */
+#endif

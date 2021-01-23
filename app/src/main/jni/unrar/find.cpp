@@ -157,7 +157,6 @@ bool FindFile::FastFind(const char *FindMask, const wchar *FindMaskW, struct Fin
     fd->ctime = st.st_ctime;
     fd->FileTime = fd->mtime.GetDos();
     strcpy(fd->Name, FindMask);
-
     *fd->NameW = 0;
 #ifdef _APPLE
     if (!LowAscii(fd->Name))
@@ -184,7 +183,6 @@ HANDLE FindFile::Win32Find(HANDLE hFind, const char *Mask, const wchar *MaskW, s
             strcpyw(WideMask, MaskW);
         else
             CharToWide(Mask, WideMask);
-
         WIN32_FIND_DATAW FindData;
         if (hFind == INVALID_HANDLE_VALUE) {
             hFind = FindFirstFileW(WideMask, &FindData);
@@ -198,7 +196,6 @@ HANDLE FindFile::Win32Find(HANDLE hFind, const char *Mask, const wchar *MaskW, s
             hFind = INVALID_HANDLE_VALUE;
             fd->Error = GetLastError() != ERROR_NO_MORE_FILES;
         }
-
         if (hFind != INVALID_HANDLE_VALUE) {
             strcpyw(fd->NameW, WideMask);
             strcpyw(PointToName(fd->NameW), FindData.cFileName);
@@ -213,7 +210,6 @@ HANDLE FindFile::Win32Find(HANDLE hFind, const char *Mask, const wchar *MaskW, s
             fd->ctime = FindData.ftCreationTime;
             fd->atime = FindData.ftLastAccessTime;
             fd->FileTime = fd->mtime.GetDos();
-
 #ifndef _WIN_CE
             if (LowAscii(fd->NameW))
                 *fd->NameW = 0;
@@ -227,7 +223,6 @@ HANDLE FindFile::Win32Find(HANDLE hFind, const char *Mask, const wchar *MaskW, s
             strcpy(CharMask, Mask);
         else
             WideToChar(MaskW, CharMask);
-
         WIN32_FIND_DATA FindData;
         if (hFind == INVALID_HANDLE_VALUE) {
             hFind = FindFirstFile(CharMask, &FindData);
@@ -239,7 +234,6 @@ HANDLE FindFile::Win32Find(HANDLE hFind, const char *Mask, const wchar *MaskW, s
             hFind = INVALID_HANDLE_VALUE;
             fd->Error = GetLastError() != ERROR_NO_MORE_FILES;
         }
-
         if (hFind != INVALID_HANDLE_VALUE) {
             strcpy(fd->Name, CharMask);
             strcpy(PointToName(fd->Name), FindData.cFileName);

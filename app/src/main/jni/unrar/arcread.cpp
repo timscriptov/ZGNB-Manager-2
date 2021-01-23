@@ -38,16 +38,12 @@ void Archive::UnexpEndArcMsg() {
 
 size_t Archive::ReadHeader() {
     CurBlockPos = Tell();
-
 #ifndef SFX_MODULE
     if (OldFormat)
         return(ReadOldHeader());
 #endif
-
     RawRead Raw(this);
-
     bool Decrypt = Encrypted && CurBlockPos >= (int64)SFXSize + SIZEOF_MARKHEAD + SIZEOF_NEWMHD;
-
     if (Decrypt) {
 #if defined(SHELL_EXT) || defined(NOCRYPT)
         return(0);
@@ -60,13 +56,11 @@ size_t Archive::ReadHeader() {
         Raw.SetCrypt(&HeadersCrypt);
 #endif
     }
-
     Raw.Read(SIZEOF_SHORTBLOCKHEAD);
     if (Raw.Size() == 0) {
         UnexpEndArcMsg();
         return(0);
     }
-
     Raw.Get(ShortBlock.HeadCRC);
     byte HeadType;
     Raw.Get(HeadType);
@@ -81,16 +75,13 @@ size_t Archive::ReadHeader() {
         ErrHandler.SetErrorCode(CRC_ERROR);
         return(0);
     }
-
     if (ShortBlock.HeadType == COMM_HEAD)
         Raw.Read(SIZEOF_COMMHEAD - SIZEOF_SHORTBLOCKHEAD);
     else if (ShortBlock.HeadType == MAIN_HEAD && (ShortBlock.Flags & MHD_COMMENT) != 0)
         Raw.Read(SIZEOF_NEWMHD - SIZEOF_SHORTBLOCKHEAD);
     else
         Raw.Read(ShortBlock.HeadSize - SIZEOF_SHORTBLOCKHEAD);
-
     NextBlockPos = CurBlockPos + ShortBlock.HeadSize;
-
     switch(ShortBlock.HeadType) {
     case MAIN_HEAD:
         *(BaseBlock *)&NewMhd = ShortBlock;
@@ -134,20 +125,16 @@ size_t Archive::ReadHeader() {
         }
         hd->FullPackSize = INT32TO64(hd->HighPackSize, hd->PackSize);
         hd->FullUnpSize = INT32TO64(hd->HighUnpSize, hd->UnpSize);
-
         char FileName[NM * 4];
         int NameSize = Min(hd->NameSize, sizeof(FileName) - 1);
         Raw.Get((byte *)FileName, NameSize);
         FileName[NameSize] = 0;
-
         strncpyz(hd->FileName, FileName, ASIZE(hd->FileName));
-
         if (hd->HeadType == NEWSUB_HEAD) {
             // Let's calculate the size of optional data.
             int DataSize = hd->HeadSize - hd->NameSize - SIZEOF_NEWLHD;
             if (hd->Flags & LHD_SALT)
                 DataSize -= SALT_SIZE;
-
             if (DataSize > 0) {
                 // Here we read optional additional fields for subheaders.
                 // They are stored after the file name and before salt.
@@ -327,7 +314,6 @@ size_t Archive::ReadHeader() {
     CurHeaderType = ShortBlock.HeadType;
     if (Decrypt) {
         NextBlockPos += Raw.PaddedSize() + SALT_SIZE;
-
         if (ShortBlock.HeadCRC != HeaderCRC) {
             bool Recovered = false;
             if (ShortBlock.HeadType == ENDARC_HEAD && (EndArcHead.Flags & EARC_REVSPACE) != 0) {
@@ -346,7 +332,6 @@ size_t Archive::ReadHeader() {
                 Log(FileName, St(MEncrBadCRC), FileName);
 #endif
                 Close();
-
                 BrokenFileHeader = true;
                 ErrHandler.SetErrorCode(CRC_ERROR);
                 return(0);
@@ -354,7 +339,6 @@ size_t Archive::ReadHeader() {
             }
         }
     }
-
     if (NextBlockPos <= CurBlockPos) {
 #ifndef SHELL_EXT
         Log(FileName, St(MLogFileHead), "???");
@@ -391,7 +375,6 @@ size_t Archive::ReadOldHeader() {
         Raw.Get(OldLhd.UnpVer);
         Raw.Get(OldLhd.NameSize);
         Raw.Get(OldLhd.Method);
-
         NewLhd.Flags = OldLhd.Flags | LONG_BLOCK;
         NewLhd.UnpVer = (OldLhd.UnpVer == 2) ? 13 : 10;
         NewLhd.Method = OldLhd.Method + 0x30;
@@ -400,18 +383,15 @@ size_t Archive::ReadOldHeader() {
         NewLhd.FileCRC = OldLhd.FileCRC;
         NewLhd.FullPackSize = NewLhd.PackSize;
         NewLhd.FullUnpSize = NewLhd.UnpSize;
-
         NewLhd.mtime.SetDos(NewLhd.FileTime);
         NewLhd.ctime.Reset();
         NewLhd.atime.Reset();
         NewLhd.arctime.Reset();
-
         Raw.Read(OldLhd.NameSize);
         Raw.Get((byte *)NewLhd.FileName, OldLhd.NameSize);
         NewLhd.FileName[OldLhd.NameSize] = 0;
         ConvertNameCase(NewLhd.FileName);
         *NewLhd.FileNameW = 0;
-
         if (Raw.Size() != 0)
             NextBlockPos = CurBlockPos + NewLhd.HeadSize + NewLhd.PackSize;
         CurHeaderType = FILE_HEAD;
@@ -481,22 +461,18 @@ void Archive::ConvertAttributes() {
     // umask defines which permission bits must not be set by default
     // when creating a file or directory.
     static mode_t mask = (mode_t) - 1;
-
     if (mask == (mode_t) - 1) {
         // umask call returns the current umask value. Argument (022) is not
         // important here.
         mask = umask(022);
-
         // Restore the original umask value, which was changed to 022 above.
         umask(mask);
     }
-
     switch(NewLhd.HostOS) {
     case HOST_MSDOS:
     case HOST_OS2:
     case HOST_WIN32: {
         // Mapping MSDOS, OS/2 and Windows file attributes to Unix.
-
         if (NewLhd.FileAttr & 0x10) { // FILE_ATTRIBUTE_DIRECTORY
             // For directories we use 0777 mask.
             NewLhd.FileAttr = 0777 & ~mask;
@@ -540,7 +516,6 @@ void Archive::ConvertUnknownHeader() {
         if ((byte)*s < 32 || (byte)*s > 127)
             *s = '_';
 #endif
-
 #if defined(_WIN_32) || defined(_EMX)
         // ':' in file names is allowed in Unix, but not in Windows.
         // Even worse, file data will be written to NTFS stream on NTFS,
@@ -550,13 +525,10 @@ void Archive::ConvertUnknownHeader() {
         if (*s == ':')
             *s = '_';
 #endif
-
     }
-
     for (wchar *s = NewLhd.FileNameW; *s != 0; s++) {
         if (*s == '/' || *s == '\\')
             *s = CPATHDIVIDER;
-
 #if defined(_WIN_32) || defined(_EMX)
         // ':' in file names is allowed in Unix, but not in Windows.
         // Even worse, file data will be written to NTFS stream on NTFS,
@@ -585,14 +557,11 @@ bool Archive::ReadSubData(Array<byte> *UnpData, File *DestFile) {
 #endif
         return(false);
     }
-
     if (SubHead.PackSize == 0 && (SubHead.Flags & LHD_SPLIT_AFTER) == 0)
         return(true);
-
     SubDataIO.Init();
     Unpack Unpack(&SubDataIO);
     Unpack.Init();
-
     if (DestFile == NULL) {
         UnpData->Alloc(SubHead.UnpSize);
         SubDataIO.SetUnpackToMemory(&(*UnpData)[0], SubHead.UnpSize);
@@ -607,7 +576,6 @@ bool Archive::ReadSubData(Array<byte> *UnpData, File *DestFile) {
         CmdExtract::UnstoreFile(SubDataIO, SubHead.UnpSize);
     else
         Unpack.DoUnpack(SubHead.UnpVer, false);
-
     if (SubHead.FileCRC != ~SubDataIO.UnpFileCRC) {
 #ifndef SHELL_EXT
         Log(FileName, St(MSubHeadDataCRC), SubHead.FileName);

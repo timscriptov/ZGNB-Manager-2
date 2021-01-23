@@ -32,7 +32,6 @@ size_t StringList::AddString(const char *Str, const wchar *StrW) {
         size_t PrevPos = PosDataW.Size();
         PosDataW.Add(1);
         PosDataW[PrevPos] = PrevSize;
-
         size_t PrevSizeW = StringDataW.Size();
         StringDataW.Add(strlenw(StrW) + 1);
         strcpyw(&StringDataW[PrevSizeW], StrW);

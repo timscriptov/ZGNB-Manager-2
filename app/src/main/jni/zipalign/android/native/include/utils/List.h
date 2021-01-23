@@ -273,7 +273,6 @@ namespace android {
         void clear() {
             _Node *pCurrent = mpMiddle->getNext();
             _Node *pNext;
-
             while (pCurrent != mpMiddle) {
                 pNext = pCurrent->getNext();
                 delete pCurrent;

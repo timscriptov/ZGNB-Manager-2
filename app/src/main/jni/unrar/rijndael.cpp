@@ -64,17 +64,12 @@ Rijndael::Rijndael() {
 
 void Rijndael::init(Direction dir, const byte *key, byte *initVector) {
     m_direction = dir;
-
     byte keyMatrix[_MAX_KEY_COLUMNS][4];
-
     for(uint i = 0; i < uKeyLenInBytes; i++)
         keyMatrix[i >> 2][i & 3] = key[i];
-
     for(int i = 0; i < MAX_IV_SIZE; i++)
         m_initVector[i] = initVector[i];
-
     keySched(keyMatrix);
-
     if(m_direction == Decrypt)
         keyEncToDec();
 }
@@ -84,10 +79,8 @@ void Rijndael::init(Direction dir, const byte *key, byte *initVector) {
 size_t Rijndael::blockDecrypt(const byte *input, size_t inputLen, byte *outBuffer) {
     if (input == 0 || inputLen <= 0)
         return 0;
-
     byte block[16], iv[4][4];
     memcpy(iv, m_initVector, 16);
-
     size_t numBlocks = inputLen / 16;
     for (size_t i = numBlocks; i > 0; i--) {
         decrypt(input, block);
@@ -102,9 +95,7 @@ size_t Rijndael::blockDecrypt(const byte *input, size_t inputLen, byte *outBuffe
         input += 16;
         outBuffer += 16;
     }
-
     memcpy(m_initVector, iv, 16);
-
     return 16 * numBlocks;
 }
 
@@ -116,39 +107,30 @@ size_t Rijndael::blockDecrypt(const byte *input, size_t inputLen, byte *outBuffe
 
 void Rijndael::keySched(byte key[_MAX_KEY_COLUMNS][4]) {
     int j, rconpointer = 0;
-
     // Calculate the necessary round keys
     // The number of calculations depends on keyBits and blockBits
     int uKeyColumns = m_uRounds - 6;
-
     byte tempKey[_MAX_KEY_COLUMNS][4];
-
     // Copy the input key to the temporary key matrix
-
     memcpy(tempKey, key, sizeof(tempKey));
-
     int r = 0;
     int t = 0;
-
     // copy values into round key array
     for(j = 0; (j < uKeyColumns) && (r <= m_uRounds); ) {
         for(; (j < uKeyColumns) && (t < 4); j++, t++)
             for (int k = 0; k < 4; k++)
                 m_expandedKey[r][t][k] = tempKey[j][k];
-
         if(t == 4) {
             r++;
             t = 0;
         }
     }
-
     while(r <= m_uRounds) {
         tempKey[0][0] ^= S[tempKey[uKeyColumns - 1][1]];
         tempKey[0][1] ^= S[tempKey[uKeyColumns - 1][2]];
         tempKey[0][2] ^= S[tempKey[uKeyColumns - 1][3]];
         tempKey[0][3] ^= S[tempKey[uKeyColumns - 1][0]];
         tempKey[0][0] ^= rcon[rconpointer++];
-
         if (uKeyColumns != 8)
             for(j = 1; j < uKeyColumns; j++)
                 for (int k = 0; k < 4; k++)
@@ -157,7 +139,6 @@ void Rijndael::keySched(byte key[_MAX_KEY_COLUMNS][4]) {
             for(j = 1; j < uKeyColumns / 2; j++)
                 for (int k = 0; k < 4; k++)
                     tempKey[j][k] ^= tempKey[j - 1][k];
-
             tempKey[uKeyColumns / 2][0] ^= S[tempKey[uKeyColumns / 2 - 1][0]];
             tempKey[uKeyColumns / 2][1] ^= S[tempKey[uKeyColumns / 2 - 1][1]];
             tempKey[uKeyColumns / 2][2] ^= S[tempKey[uKeyColumns / 2 - 1][2]];
@@ -194,14 +175,11 @@ void Rijndael::keyEncToDec() {
 void Rijndael::decrypt(const byte a[16], byte b[16]) {
     int r;
     byte temp[4][4];
-
     Xor128((byte *)temp, (byte *)a, (byte *)m_expandedKey[m_uRounds]);
-
     Xor128(b,   T5[temp[0][0]], T6[temp[3][1]], T7[temp[2][2]], T8[temp[1][3]]);
     Xor128(b + 4, T5[temp[1][0]], T6[temp[0][1]], T7[temp[3][2]], T8[temp[2][3]]);
     Xor128(b + 8, T5[temp[2][0]], T6[temp[1][1]], T7[temp[0][2]], T8[temp[3][3]]);
     Xor128(b + 12, T5[temp[3][0]], T6[temp[2][1]], T7[temp[1][2]], T8[temp[0][3]]);
-
     for(r = m_uRounds - 1; r > 1; r--) {
         Xor128((byte *)temp, (byte *)b, (byte *)m_expandedKey[r]);
         Xor128(b,   T5[temp[0][0]], T6[temp[3][1]], T7[temp[2][2]], T8[temp[1][3]]);
@@ -209,7 +187,6 @@ void Rijndael::decrypt(const byte a[16], byte b[16]) {
         Xor128(b + 8, T5[temp[2][0]], T6[temp[1][1]], T7[temp[0][2]], T8[temp[3][3]]);
         Xor128(b + 12, T5[temp[3][0]], T6[temp[2][1]], T7[temp[1][2]], T8[temp[0][3]]);
     }
-
     Xor128((byte *)temp, (byte *)b, (byte *)m_expandedKey[1]);
     b[ 0] = S5[temp[0][0]];
     b[ 1] = S5[temp[3][1]];
@@ -256,7 +233,6 @@ void Rijndael::GenerateTables() {
         log[w] = (byte)i++;
         w ^=  (w << 1) ^ (w & ff_hi ? ff_poly : 0);
     } while (w != 1);
-
     for (int i = 0, w = 1; i < sizeof(rcon) / sizeof(rcon[0]); i++) {
         rcon[i] = w;
         w = (w << 1) ^ (w & ff_hi ? ff_poly : 0);

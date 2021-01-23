@@ -102,9 +102,8 @@ namespace android {
             pthread_rwlockattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);
             pthread_rwlock_init(&mRWLock, &attr);
             pthread_rwlockattr_destroy(&attr);
-        } else {
+        } else
             pthread_rwlock_init(&mRWLock, NULL);
-        }
     }
     inline RWLock::~RWLock() {
         pthread_rwlock_destroy(&mRWLock);

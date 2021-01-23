@@ -5,7 +5,6 @@
 void ExtractStreams(Archive &Arc, char *FileName, wchar *FileNameW) {
     if (!WinNT())
         return;
-
     if (Arc.HeaderCRC != Arc.StreamHead.HeadCRC) {
 #ifndef SILENT
         Log(Arc.FileName, St(MStreamBroken), FileName);
@@ -13,7 +12,6 @@ void ExtractStreams(Archive &Arc, char *FileName, wchar *FileNameW) {
         ErrHandler.SetErrorCode(CRC_ERROR);
         return;
     }
-
     if (Arc.StreamHead.Method < 0x31 || Arc.StreamHead.Method > 0x35 || Arc.StreamHead.UnpVer > PACK_VER) {
 #ifndef SILENT
         Log(Arc.FileName, St(MStreamUnknown), FileName);
@@ -21,7 +19,6 @@ void ExtractStreams(Archive &Arc, char *FileName, wchar *FileNameW) {
         ErrHandler.SetErrorCode(WARNING);
         return;
     }
-
     char StreamName[NM + 2];
     if (FileName[0] != 0 && FileName[1] == 0) {
         strcpy(StreamName, ".\\");
@@ -36,30 +33,23 @@ void ExtractStreams(Archive &Arc, char *FileName, wchar *FileNameW) {
         ErrHandler.SetErrorCode(CRC_ERROR);
         return;
     }
-
     ConvertPath((char *)Arc.StreamHead.StreamName + 1, (char *)Arc.StreamHead.StreamName + 1);
-
     strcat(StreamName, (char *)Arc.StreamHead.StreamName);
-
     FindData fd;
     bool Found = FindFile::FastFind(FileName, FileNameW, &fd);
-
     if (fd.FileAttr & FILE_ATTRIBUTE_READONLY)
         SetFileAttr(FileName, FileNameW, fd.FileAttr & ~FILE_ATTRIBUTE_READONLY);
-
     File CurFile;
     if (CurFile.WCreate(StreamName)) {
         ComprDataIO DataIO;
         Unpack Unpack(&DataIO);
         Unpack.Init();
-
         Array<unsigned char> UnpData(Arc.StreamHead.UnpSize);
         DataIO.SetPackedSizeToRead(Arc.StreamHead.DataSize);
         DataIO.EnableShowProgress(false);
         DataIO.SetFiles(&Arc, &CurFile);
         Unpack.SetDestSize(Arc.StreamHead.UnpSize);
         Unpack.DoUnpack(Arc.StreamHead.UnpVer, false);
-
         if (Arc.StreamHead.StreamCRC != ~DataIO.UnpFileCRC) {
 #ifndef SILENT
             Log(Arc.FileName, St(MStreamBroken), StreamName);
@@ -81,7 +71,6 @@ void ExtractStreams(Archive &Arc, char *FileName, wchar *FileNameW) {
 void ExtractStreamsNew(Archive &Arc, char *FileName, wchar *FileNameW) {
     if (!WinNT())
         return;
-
     wchar NameW[NM];
     if (FileNameW != NULL && *FileNameW != 0)
         strcpyw(NameW, FileNameW);
@@ -93,11 +82,9 @@ void ExtractStreamsNew(Archive &Arc, char *FileName, wchar *FileNameW) {
         strcpyw(StreamNameW + 2, NameW);
     } else
         strcpyw(StreamNameW, NameW);
-
     wchar *DestName = StreamNameW + strlenw(StreamNameW);
     byte *SrcName = &Arc.SubHead.SubData[0];
     size_t DestSize = Arc.SubHead.SubData.Size() / 2;
-
     if (strlenw(StreamNameW) + DestSize >= ASIZE(StreamNameW)) {
 #if !defined(SILENT) && !defined(SFX_MODULE)
         Log(Arc.FileName, St(MStreamBroken), FileName);
@@ -105,10 +92,8 @@ void ExtractStreamsNew(Archive &Arc, char *FileName, wchar *FileNameW) {
         ErrHandler.SetErrorCode(CRC_ERROR);
         return;
     }
-
     RawToWide(SrcName, DestName, DestSize);
     DestName[DestSize] = 0;
-
     if (*DestName != ':') {
 #if !defined(SILENT) && !defined(SFX_MODULE)
         Log(Arc.FileName, St(MStreamBroken), FileName);
@@ -116,12 +101,9 @@ void ExtractStreamsNew(Archive &Arc, char *FileName, wchar *FileNameW) {
         ErrHandler.SetErrorCode(CRC_ERROR);
         return;
     }
-
     ConvertPath(DestName + 1, DestName + 1);
-
     FindData fd;
     bool Found = FindFile::FastFind(FileName, FileNameW, &fd);
-
     if (fd.FileAttr & FILE_ATTRIBUTE_READONLY)
         SetFileAttr(FileName, FileNameW, fd.FileAttr & ~FILE_ATTRIBUTE_READONLY);
     char StreamName[NM];
@@ -133,7 +115,6 @@ void ExtractStreamsNew(Archive &Arc, char *FileName, wchar *FileNameW) {
     if (Found && HostFile.Open(FileName, FileNameW, true, true))
         SetFileTime(HostFile.GetHandle(), &fd.ftCreationTime, &fd.ftLastAccessTime,
                     &fd.ftLastWriteTime);
-
     // Restoring original file attributes. Important if file was read only
     // or did not have "Archive" attribute
     SetFileAttr(FileName, FileNameW, fd.FileAttr);

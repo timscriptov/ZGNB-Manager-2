@@ -115,10 +115,8 @@ void RarVM::Execute(VM_PreparedProgram *Prg) {
     size_t StaticSize = Min(Prg->StaticData.Size(), VM_GLOBALMEMSIZE - GlobalSize);
     if (StaticSize)
         memcpy(Mem + VM_GLOBALMEMADDR + GlobalSize, &Prg->StaticData[0], StaticSize);
-
     R[7] = VM_MEMSIZE;
     Flags = 0;
-
     VM_PreparedCommand *PreparedCode = Prg->AltCmd ? Prg->AltCmd : &Prg->Cmd[0];
     if (Prg->CmdCount > 0 && !ExecuteCode(PreparedCode, Prg->CmdCount)) {
         // Invalid VM program. Let's replace it with 'return' command.
@@ -130,9 +128,7 @@ void RarVM::Execute(VM_PreparedProgram *Prg) {
         NewBlockPos = NewBlockSize = 0;
     Prg->FilteredData = Mem + NewBlockPos;
     Prg->FilteredDataSize = NewBlockSize;
-
     Prg->GlobalData.Reset();
-
     uint DataSize = Min(GET_VALUE(false, (uint *)&Mem[VM_GLOBALMEMADDR + 0x30]), VM_GLOBALMEMSIZE - VM_FIXEDGLOBALSIZE);
     if (DataSize != 0) {
         Prg->GlobalData.Add(DataSize + VM_FIXEDGLOBALSIZE);
@@ -484,14 +480,11 @@ bool RarVM::ExecuteCode(VM_PreparedCommand *PreparedCode, uint CodeSize) {
 void RarVM::Prepare(byte *Code, uint CodeSize, VM_PreparedProgram *Prg) {
     InitBitInput();
     memcpy(InBuf, Code, Min(CodeSize, BitInput::MAX_SIZE));
-
     // Calculate the single byte XOR checksum to check validity of VM code.
     byte XorSum = 0;
     for (uint I = 1; I < CodeSize; I++)
         XorSum ^= Code[I];
-
     faddbits(8);
-
     Prg->CmdCount = 0;
     if (XorSum == Code[0]) { // VM code is valid if equal.
 #ifdef VM_STANDARDFILTERS
@@ -510,10 +503,8 @@ void RarVM::Prepare(byte *Code, uint CodeSize, VM_PreparedProgram *Prg) {
 #endif
         uint DataFlag = fgetbits();
         faddbits(1);
-
         // Read static data contained in DB operators. This data cannot be
         // changed, it is a part of VM code, not a filter parameter.
-
         if (DataFlag & 0x8000) {
             uint DataSize = ReadData(*this) + 1;
             for (uint I = 0; (uint)InAddr < CodeSize && I < DataSize; I++) {
@@ -522,7 +513,6 @@ void RarVM::Prepare(byte *Code, uint CodeSize, VM_PreparedProgram *Prg) {
                 faddbits(8);
             }
         }
-
         while ((uint)InAddr < CodeSize) {
             Prg->Cmd.Add(1);
             VM_PreparedCommand *CurCmd = &Prg->Cmd[Prg->CmdCount];
@@ -568,7 +558,6 @@ void RarVM::Prepare(byte *Code, uint CodeSize, VM_PreparedProgram *Prg) {
             Prg->CmdCount++;
         }
     }
-
     // Adding RET command at the end of program.
     Prg->Cmd.Add(1);
     VM_PreparedCommand *CurCmd = &Prg->Cmd[Prg->CmdCount++];
@@ -576,7 +565,6 @@ void RarVM::Prepare(byte *Code, uint CodeSize, VM_PreparedProgram *Prg) {
     CurCmd->Op1.Addr = &CurCmd->Op1.Data;
     CurCmd->Op2.Addr = &CurCmd->Op2.Data;
     CurCmd->Op1.Type = CurCmd->Op2.Type = VM_OPNONE;
-
     // If operand 'Addr' field has not been set by DecodeArg calls above,
     // let's set it to point to operand 'Data' field. It is necessary for
     // VM_OPINT type operands (usual integers) or maybe if something was
@@ -589,7 +577,6 @@ void RarVM::Prepare(byte *Code, uint CodeSize, VM_PreparedProgram *Prg) {
         if (Cmd->Op2.Addr == NULL)
             Cmd->Op2.Addr = &Cmd->Op2.Data;
     }
-
 #ifdef VM_OPTIMIZE
     if (CodeSize != 0)
         Optimize(Prg);
@@ -680,10 +667,8 @@ void RarVM::SetMemory(uint Pos, byte *Data, uint DataSize) {
 void RarVM::Optimize(VM_PreparedProgram *Prg) {
     VM_PreparedCommand *Code = &Prg->Cmd[0];
     uint CodeSize = Prg->CmdCount;
-
     for (uint I = 0; I < CodeSize; I++) {
         VM_PreparedCommand *Cmd = Code + I;
-
         // Replace universal opcodes with faster byte or word only processing
         // opcodes.
         switch(Cmd->OpCode) {
@@ -696,7 +681,6 @@ void RarVM::Optimize(VM_PreparedProgram *Prg) {
         }
         if ((VM_CmdFlags[Cmd->OpCode] & VMCF_CHFLAGS) == 0)
             continue;
-
         // If we do not have jump commands between the current operation
         // and next command which will modify processor flags, we can replace
         // the current command with faster version which does not need to
@@ -711,7 +695,6 @@ void RarVM::Optimize(VM_PreparedProgram *Prg) {
             if (Flags & VMCF_CHFLAGS)
                 break;
         }
-
         // Below we'll replace universal opcodes with faster byte or word only
         // processing opcodes, which also do not modify processor flags to
         // provide better performance.
@@ -769,10 +752,8 @@ void RarVM::ExecuteStandardFilter(VM_StandardFilters FilterType) {
         byte *Data = Mem;
         int DataSize = R[4];
         uint FileOffset = R[6];
-
         if ((uint)DataSize >= VM_GLOBALMEMADDR || DataSize < 4)
             break;
-
         const int FileSize = 0x1000000;
         byte CmpByte2 = FilterType == VMSF_E8E9 ? 0xe9 : 0xe8;
         for (int CurPos = 0; CurPos < DataSize - 4;) {
@@ -806,14 +787,10 @@ void RarVM::ExecuteStandardFilter(VM_StandardFilters FilterType) {
         byte *Data = Mem;
         int DataSize = R[4];
         uint FileOffset = R[6];
-
         if ((uint)DataSize >= VM_GLOBALMEMADDR || DataSize < 21)
             break;
-
         int CurPos = 0;
-
         FileOffset >>= 4;
-
         while (CurPos < DataSize - 21) {
             int Byte = (Data[0] & 0x1f) - 0x10;
             if (Byte >= 0) {
@@ -841,7 +818,6 @@ void RarVM::ExecuteStandardFilter(VM_StandardFilters FilterType) {
         SET_VALUE(false, &Mem[VM_GLOBALMEMADDR + 0x20], DataSize);
         if ((uint)DataSize >= VM_GLOBALMEMADDR / 2)
             break;
-
         // Bytes from same channels are grouped to continual data blocks,
         // so we need to place them back to their interleaving positions.
         for (int CurChannel = 0; CurChannel < Channels; CurChannel++) {
@@ -860,7 +836,6 @@ void RarVM::ExecuteStandardFilter(VM_StandardFilters FilterType) {
             break;
         for (int CurChannel = 0; CurChannel < Channels; CurChannel++) {
             uint PrevByte = 0;
-
             for (int I = CurChannel; I < DataSize; I += Channels) {
                 uint Predicted;
                 int UpperPos = I - Width;
@@ -901,24 +876,18 @@ void RarVM::ExecuteStandardFilter(VM_StandardFilters FilterType) {
             int D1 = 0, D2 = 0, D3;
             int K1 = 0, K2 = 0, K3 = 0;
             memset(Dif, 0, sizeof(Dif));
-
             for (int I = CurChannel, ByteCount = 0; I < DataSize; I += Channels, ByteCount++) {
                 D3 = D2;
                 D2 = PrevDelta - D1;
                 D1 = PrevDelta;
-
                 uint Predicted = 8 * PrevByte + K1 * D1 + K2 * D2 + K3 * D3;
                 Predicted = (Predicted >> 3) & 0xff;
-
                 uint CurByte = *(SrcData++);
-
                 Predicted -= CurByte;
                 DestData[I] = Predicted;
                 PrevDelta = (signed char)(Predicted - PrevByte);
                 PrevByte = Predicted;
-
                 int D = ((signed char)CurByte) << 3;
-
                 Dif[0] += abs(D);
                 Dif[1] += abs(D - D1);
                 Dif[2] += abs(D + D1);
@@ -926,7 +895,6 @@ void RarVM::ExecuteStandardFilter(VM_StandardFilters FilterType) {
                 Dif[4] += abs(D + D2);
                 Dif[5] += abs(D - D3);
                 Dif[6] += abs(D + D3);
-
                 if ((ByteCount & 0x1f) == 0) {
                     uint MinDif = Dif[0], NumMinDif = 0;
                     Dif[0] = 0;
@@ -997,9 +965,7 @@ void RarVM::FilterItanium_SetBits(byte *Data, uint BitField, int BitPos, int Bit
     int InBit = BitPos & 7;
     uint AndMask = 0xffffffff >> (32 - BitCount);
     AndMask = ~(AndMask << InBit);
-
     BitField <<= InBit;
-
     for (uint I = 0; I < 4; I++) {
         Data[InAddr + I] &= AndMask;
         Data[InAddr + I] |= BitField;

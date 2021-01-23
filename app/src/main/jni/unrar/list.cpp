@@ -12,10 +12,8 @@ void ListArchive(CommandData *Cmd) {
     bool Technical = (Cmd->Command[1] == 'T');
     bool Bare = (Cmd->Command[1] == 'B');
     bool Verbose = (*Cmd->Command == 'V');
-
     char ArcName[NM];
     wchar ArcNameW[NM];
-
     while (Cmd->GetArcName(ArcName, ArcNameW, sizeof(ArcName))) {
         Archive Arc(Cmd);
 #ifdef _WIN_32
@@ -33,11 +31,9 @@ void ListArchive(CommandData *Cmd) {
                 bool TitleShown = false;
                 if (!Bare) {
                     Arc.ViewComment();
-
                     // RAR can close a corrupt encrypted archive
                     if (!Arc.IsOpened())
                         break;
-
                     mprintf("\n");
                     if (Arc.Solid)
                         mprintf(St(MListSolid));
@@ -106,10 +102,8 @@ void ListArchive(CommandData *Cmd) {
                             mprintf("-");
                         char UnpSizeText[20];
                         itoa(TotalUnpSize, UnpSizeText);
-
                         char PackSizeText[20];
                         itoa(TotalPackSize, PackSizeText);
-
                         mprintf("\n%5lu %16s %8s %3d%%", FileCount, UnpSizeText,
                                 PackSizeText, ToPercentUnlim(TotalPackSize, TotalUnpSize));
                         SumFileCount += FileCount;
@@ -124,16 +118,14 @@ void ListArchive(CommandData *Cmd) {
                         mprintf("\n");
                     } else
                         mprintf(St(MListNoFiles));
-
                 ArcCount++;
-
 #ifndef NOVOLUME
                 if (Cmd->VolSize != 0 && ((Arc.NewLhd.Flags & LHD_SPLIT_AFTER) ||
                                           Arc.GetHeaderType() == ENDARC_HEAD &&
                                           (Arc.EndArcHead.Flags & EARC_NEXT_VOLUME) != 0) &&
-                        MergeArchive(Arc, NULL, false, *Cmd->Command)) {
+                        MergeArchive(Arc, NULL, false, *Cmd->Command))
                     Arc.Seek(0, SEEK_SET);
-                } else
+                else
 #endif
                     break;
             } else {
@@ -167,15 +159,11 @@ void ListFileHeader(FileHeader &hd, bool Verbose, bool Technical, bool &TitleSho
                 mprintf("-");
             TitleShown = true;
         }
-
         if (hd.HeadType == NEWSUB_HEAD)
             mprintf(St(MSubHeadType), hd.FileName);
-
         mprintf("\n%c", (hd.Flags & LHD_PASSWORD) ? '*' : ' ');
     }
-
     char *Name = hd.FileName;
-
 #ifdef UNICODE_SUPPORTED
     char ConvertedName[NM];
     if ((hd.Flags & LHD_UNICODE) != 0 && *hd.FileNameW != 0 && UnicodeEnabled()) {
@@ -183,26 +171,21 @@ void ListFileHeader(FileHeader &hd, bool Verbose, bool Technical, bool &TitleSho
             Name = ConvertedName;
     }
 #endif
-
     if (Bare) {
         mprintf("%s\n", Verbose ? Name : PointToName(Name));
         return;
     }
-
     if (Verbose)
         mprintf("%s\n%12s ", Name, "");
     else
         mprintf("%-12s", PointToName(Name));
-
     char UnpSizeText[20], PackSizeText[20];
     if (hd.FullUnpSize == INT64NDF)
         strcpy(UnpSizeText, "?");
     else
         itoa(hd.FullUnpSize, UnpSizeText);
     itoa(hd.FullPackSize, PackSizeText);
-
     mprintf(" %8s %8s ", UnpSizeText, PackSizeText);
-
     if ((hd.Flags & LHD_SPLIT_BEFORE) && (hd.Flags & LHD_SPLIT_AFTER))
         mprintf(" <->");
     else if (hd.Flags & LHD_SPLIT_BEFORE)
@@ -211,16 +194,13 @@ void ListFileHeader(FileHeader &hd, bool Verbose, bool Technical, bool &TitleSho
         mprintf(" -->");
     else
         mprintf("%3d%%", ToPercentUnlim(hd.FullPackSize, hd.FullUnpSize));
-
     char DateStr[50];
     hd.mtime.GetText(DateStr, false);
     mprintf(" %s ", DateStr);
-
     if (hd.HeadType == NEWSUB_HEAD)
         mprintf("  %c....B  ", (hd.SubFlags & SUBHEAD_FLAGS_INHERITED) ? 'I' : '.');
     else
         ListFileAttr(hd.FileAttr, hd.HostOS);
-
     mprintf(" %8.8X", hd.FileCRC);
     mprintf(" m%d", hd.Method - 0x30);
     if ((hd.Flags & LHD_WINDOWMASK) <= 6 * 32)
@@ -228,11 +208,9 @@ void ListFileHeader(FileHeader &hd, bool Verbose, bool Technical, bool &TitleSho
     else
         mprintf(" ");
     mprintf(" %d.%d", hd.UnpVer / 10, hd.UnpVer % 10);
-
     static const char *RarOS[] = {
         "DOS", "OS/2", "Win95/NT", "Unix", "MacOS", "BeOS", "WinCE", "", "", ""
     };
-
     if (Technical)
         mprintf("\n%22s %8s %4s",
                 (hd.HostOS < sizeof(RarOS) / sizeof(RarOS[0]) ? RarOS[hd.HostOS] : ""),

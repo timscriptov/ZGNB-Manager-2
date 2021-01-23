@@ -143,9 +143,8 @@ namespace android {
     template<typename TYPE> inline
     void construct_type(TYPE *p, size_t n) {
         if (!traits<TYPE>::has_trivial_ctor) {
-            while (n--) {
+            while (n--)
                 new(p++) TYPE;
-            }
         }
     }
 
@@ -166,9 +165,8 @@ namespace android {
                 new(d) TYPE(*s);
                 d++, s++;
             }
-        } else {
+        } else
             memcpy(d, s, n * sizeof(TYPE));
-        }
     }
 
     template<typename TYPE> inline
@@ -179,30 +177,27 @@ namespace android {
                 where++;
             }
         } else {
-            while (n--) {
+            while (n--)
                 *where++ = *what;
-            }
         }
     }
 
     template<typename TYPE> inline
     void move_forward_type(TYPE *d, const TYPE *s, size_t n = 1) {
         if ((traits<TYPE>::has_trivial_dtor && traits<TYPE>::has_trivial_copy)
-                || traits<TYPE>::has_trivial_move) {
+                || traits<TYPE>::has_trivial_move)
             memmove(d, s, n * sizeof(TYPE));
-        } else {
+        else {
             d += n;
             s += n;
             while (n--) {
                 --d, --s;
-                if (!traits<TYPE>::has_trivial_copy) {
+                if (!traits<TYPE>::has_trivial_copy)
                     new(d) TYPE(*s);
-                } else {
+                else
                     *d = *s;
-                }
-                if (!traits<TYPE>::has_trivial_dtor) {
+                if (!traits<TYPE>::has_trivial_dtor)
                     s->~TYPE();
-                }
             }
         }
     }
@@ -210,18 +205,16 @@ namespace android {
     template<typename TYPE> inline
     void move_backward_type(TYPE *d, const TYPE *s, size_t n = 1) {
         if ((traits<TYPE>::has_trivial_dtor && traits<TYPE>::has_trivial_copy)
-                || traits<TYPE>::has_trivial_move) {
+                || traits<TYPE>::has_trivial_move)
             memmove(d, s, n * sizeof(TYPE));
-        } else {
+        else {
             while (n--) {
-                if (!traits<TYPE>::has_trivial_copy) {
+                if (!traits<TYPE>::has_trivial_copy)
                     new(d) TYPE(*s);
-                } else {
+                else
                     *d = *s;
-                }
-                if (!traits<TYPE>::has_trivial_dtor) {
+                if (!traits<TYPE>::has_trivial_dtor)
                     s->~TYPE();
-                }
                 d++, s++;
             }
         }

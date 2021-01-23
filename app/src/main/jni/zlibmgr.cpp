@@ -13,11 +13,11 @@ using namespace std;
 extern CZlibMgr g_kZlibMgr;
 
 void mydbg(const char *msg) {
-    __android_log_print(ANDROID_LOG_INFO, "ZGNB String Compression", "%s" , msg);
+    __android_log_print(ANDROID_LOG_INFO, "Perez String Compression", "%s", msg);
 }
 
 string doCompress(string hello) {
-    Byte compr[200000], uncompr[200000];    // big enough
+    Byte compr[200000], uncompr[200000];
     string decdata;
     memset(compr, 0, 200000);
     memset(uncompr, 0, 200000);
@@ -31,25 +31,25 @@ string doCompress(string hello) {
         strd[k] = (int)sOutBuf[k];
         strd[k] = abs(strd[k]);
     }
-    //cout << "Compressed Integer Data:" << endl;
+
     stringstream ss;
-    //ss << "Compressed Integer Data:" << endl;
-    for(int k = 0; k < strlen(sOutBuf); k++) {
+
+    for(int k = 0; k < strlen(sOutBuf); k++)
         ss << strd[k];
-    }
     decdata = ss.str();
     mydbg(decdata.c_str());
     char sUnCompressBuf[8096];
     memset(sUnCompressBuf, 0, sizeof(sUnCompressBuf));
     g_kZlibMgr.UnCompress(sOutBuf, sUnCompressBuf, u1);
     stringstream sa;
-    //sa << "Uncompressed Data:" << endl;
+
     sa << sUnCompressBuf << endl;
     mydbg(sa.str().c_str());
     return decdata;
 }
 
-extern "C" JNIEXPORT jstring JNICALL Java_com_zengge_nbmanager_Features_compressStrToInt(JNIEnv *env, jclass cls, jstring jstr) {
+JNIEXPORT jstring JNICALL Java_com_zengge_nbmanager_Features_compressStrToInt
+(JNIEnv *env, jclass cls, jstring jstr) {
     const char *s1 = env->GetStringUTFChars(jstr, NULL);
     string p = doCompress(string(s1));
     int len1 = string(s1).length(), len2 = p.length();

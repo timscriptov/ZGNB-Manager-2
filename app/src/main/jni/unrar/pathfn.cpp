@@ -30,12 +30,10 @@ char *PointToLastChar(const char *Path) {
 
 char *ConvertPath(const char *SrcPath, char *DestPath) {
     const char *DestPtr = SrcPath;
-
     // Prevent \..\ in any part of path string.
     for (const char *s = DestPtr; *s != 0; s++)
         if (IsPathDiv(s[0]) && s[1] == '.' && s[2] == '.' && IsPathDiv(s[3]))
             DestPtr = s + 4;
-
     // Remove any sequence of . and \ in the beginning of path string.
     while (*DestPtr) {
         const char *s = DestPtr;
@@ -55,11 +53,9 @@ char *ConvertPath(const char *SrcPath, char *DestPath) {
             break;
         DestPtr = s;
     }
-
     // Code above does not remove last "..", doing here.
     if (DestPtr[0] == '.' && DestPtr[1] == '.' && DestPtr[2] == 0)
         DestPtr += 2;
-
     if (DestPath != NULL) {
         // SrcPath and DestPath can point to same memory area,
         // so we use the temporary buffer for copying.
@@ -138,7 +134,6 @@ void SetSFXExt(char *SFXName) {
 #ifdef _UNIX
     SetExt(SFXName, "sfx");
 #endif
-
 #if defined(_WIN_32) || defined(_EMX)
     SetExt(SFXName, "exe");
 #endif
@@ -150,11 +145,9 @@ void SetSFXExt(char *SFXName) {
 void SetSFXExt(wchar *SFXName) {
     if (SFXName == NULL || *SFXName == 0)
         return;
-
 #ifdef _UNIX
     SetExt(SFXName, L"sfx");
 #endif
-
 #if defined(_WIN_32) || defined(_EMX)
     SetExt(SFXName, L"exe");
 #endif
@@ -288,7 +281,6 @@ void GetAppDataPath(char *Path) {
 #if defined(_WIN_32) && !defined(_WIN_CE) && !defined(SFX_MODULE)
 void GetRarDataPath(char *Path) {
     *Path = 0;
-
     HKEY hKey;
     if (RegOpenKeyEx(HKEY_CURRENT_USER, "Software\\WinRAR\\Paths", 0,
                      KEY_QUERY_VALUE, &hKey) == ERROR_SUCCESS) {
@@ -296,7 +288,6 @@ void GetRarDataPath(char *Path) {
         RegQueryValueEx(hKey, "AppData", 0, &Type, (BYTE *)Path, &DataSize);
         RegCloseKey(hKey);
     }
-
     if (*Path == 0 || !FileExist(Path))
         GetAppDataPath(Path);
 }
@@ -338,7 +329,6 @@ bool EnumConfigPaths(char *Path, int Number) {
     strcpy(Path, AltPath[Number]);
     return(true);
 #elif defined(_WIN_32)
-
     if (Number < 0 || Number > 1)
         return(false);
     if (Number == 0)
@@ -348,7 +338,6 @@ bool EnumConfigPaths(char *Path, int Number) {
         RemoveNameFromPath(Path);
     }
     return(true);
-
 #else
     return(false);
 #endif
@@ -373,16 +362,13 @@ void GetConfigName(const char *Name, char *FullName, bool CheckExist) {
 char *GetVolNumPart(char *ArcName) {
     // Pointing to last name character.
     char *ChPtr = ArcName + strlen(ArcName) - 1;
-
     // Skipping the archive extension.
     while (!IsDigit(*ChPtr) && ChPtr > ArcName)
         ChPtr--;
-
     // Skipping the numeric part of name.
     char *NumPtr = ChPtr;
     while (IsDigit(*NumPtr) && NumPtr > ArcName)
         NumPtr--;
-
     // Searching for first numeric part in names like name.part##of##.rar.
     // Stop search on the first dot.
     while (NumPtr > ArcName && *NumPtr != '.') {
@@ -409,7 +395,6 @@ void NextVolumeName(char *ArcName, wchar *ArcNameW, uint MaxLength, bool OldNumb
         strcpy(ChPtr + 1, "rar");
     if (!OldNumbering) {
         ChPtr = GetVolNumPart(ArcName);
-
         while ((++(*ChPtr)) == '9' + 1) {
             *ChPtr = '0';
             ChPtr--;
@@ -437,16 +422,13 @@ void NextVolumeName(char *ArcName, wchar *ArcNameW, uint MaxLength, bool OldNumb
         // Copy incremented trailing low ASCII volume name part to Unicode name.
         // It is simpler than implementing Unicode version of entire function.
         char *NumPtr = GetVolNumPart(ArcName);
-
         // moving to first digit in volume number
         while (NumPtr > ArcName && IsDigit(*NumPtr) && IsDigit(*(NumPtr - 1)))
             NumPtr--;
-
         // also copy the first character before volume number,
         // because it can be changed when going from .r99 to .s00
         if (NumPtr > ArcName)
             NumPtr--;
-
         int CharsToCopy = (int)(strlen(ArcName) - (NumPtr - ArcName));
         int DestPos = (int)(strlenw(ArcNameW) - CharsToCopy);
         if (DestPos >= 0) {

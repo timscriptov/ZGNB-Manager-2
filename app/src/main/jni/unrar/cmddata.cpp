@@ -13,13 +13,11 @@ CommandData::~CommandData() {
 
 void CommandData::Init() {
     Close();
-
     *Command = 0;
     *ArcName = 0;
     *ArcNameW = 0;
     FileLists = false;
     NoMoreSwitches = false;
-
     FileArgs = new StringList;
     ExclArgs = new StringList;
     InclArgs = new StringList;
@@ -83,17 +81,13 @@ void CommandData::ParseArg(char *Arg, wchar *ArgW) {
             bool Found = FindFile::FastFind(Arg, NULL, &FileData);
             if (!Found && *Arg == '@' && !IsWildcard(Arg)) {
                 FileLists = true;
-
                 RAR_CHARSET Charset = FilelistCharset;
-
 #if defined(_WIN_32) && !defined(GUI)
                 // for compatibility reasons we use OEM encoding
                 // in Win32 console version by default
-
                 if (Charset == RCH_DEFAULT)
                     Charset = RCH_OEM;
 #endif
-
                 ReadTextFile(Arg + 1, FileArgs, false, true, Charset, true, true, true);
             } else if (Found && FileData.IsDir && Extract && *ExtrPath == 0) {
                 strcpy(ExtrPath, Arg);
@@ -195,7 +189,6 @@ void CommandData::ProcessSwitchesString(char *Str) {
 
 #if !defined(SFX_MODULE)
 void CommandData::ProcessSwitch(char *Switch, wchar *SwitchW) {
-
     switch(etoupper(Switch[0])) {
     case 'I':
         if (strnicomp(&Switch[1], "LOG", 3) == 0) {
@@ -424,15 +417,12 @@ void CommandData::ProcessSwitch(char *Switch, wchar *SwitchW) {
             StringList *Args = etoupper(Switch[0]) == 'N' ? InclArgs : ExclArgs;
             if (Switch[1] == '@' && !IsWildcard(Switch)) {
                 RAR_CHARSET Charset = FilelistCharset;
-
 #if defined(_WIN_32) && !defined(GUI)
                 // for compatibility reasons we use OEM encoding
                 // in Win32 console version by default
-
                 if (Charset == RCH_DEFAULT)
                     Charset = RCH_OEM;
 #endif
-
                 ReadTextFile(Switch + 2, Args, false, true, Charset, true, true, true);
             } else
                 Args->AddString(Switch + 1);
@@ -618,7 +608,6 @@ void CommandData::ProcessSwitch(char *Switch, wchar *SwitchW) {
             break;
         default: {
             int64 NewVolSize = atoil(&Switch[1]);
-
             if (NewVolSize == 0)
                 NewVolSize = INT64NDF; // Autodetecting volume size.
             else
@@ -730,7 +719,6 @@ void CommandData::ProcessSwitch(char *Switch, wchar *SwitchW) {
             case 'C': {
                 // Switch is already found bad, avoid reporting it several times.
                 bool AlreadyBad = false;
-
                 RAR_CHARSET rch = RCH_DEFAULT;
                 switch(etoupper(Switch[2])) {
                 case 'A':
@@ -766,7 +754,6 @@ void CommandData::ProcessSwitch(char *Switch, wchar *SwitchW) {
                             }
             }
             break;
-
             }
         break;
     case 'C':
@@ -875,7 +862,6 @@ void CommandData::OutHelp() {
 #else
 #endif
     };
-
     for (int I = 0; I < sizeof(Help) / sizeof(Help[0]); I++) {
 #ifndef SFX_MODULE
 #ifdef DISABLEAUTODETECT
@@ -972,7 +958,6 @@ bool CommandData::ExclCheckDir(char *CheckName) {
     // If exclusion mask and directory name match exactly, return true.
     if (ExclCheckArgs(ExclArgs, CheckName, true, MATCH_EXACT))
         return(true);
-
     // Now we want to allow wildcards in exclusion mask only if it has
     // '\' at the end. So 'dir*\' will exclude all dir* directories.
     // We append '\' to directory name, so it will match only masks having
@@ -980,14 +965,12 @@ bool CommandData::ExclCheckDir(char *CheckName) {
     char DirName[NM + 1];
     ConvertPath(CheckName, DirName);
     AddEndSlash(DirName);
-
     char *CurMask;
     ExclArgs->Rewind();
     while ((CurMask = ExclArgs->GetString()) != NULL)
         if (IsPathDiv(*PointToLastChar(CurMask)))
             if (CmpName(CurMask, DirName, MATCH_SUBPATH))
                 return(true);
-
     return(false);
 }
 
@@ -1074,11 +1057,9 @@ int CommandData::IsProcessFile(FileHeader &NewLhd, bool *ExactMatch, int MatchTy
 #ifndef GUI
 void CommandData::ProcessCommand() {
 #ifndef SFX_MODULE
-
     const char *SingleCharCommands = "FUADPXETK";
     if (Command[1] && strchr(SingleCharCommands, *Command) != NULL || *ArcName == 0)
         OutHelp();
-
 #ifdef _UNIX
     if (GetExt(ArcName) == NULL && (!FileExist(ArcName) || IsDir(GetFileAttr(ArcName))))
         strcat(ArcName, ".rar");
@@ -1086,7 +1067,6 @@ void CommandData::ProcessCommand() {
     if (GetExt(ArcName) == NULL)
         strcat(ArcName, ".rar");
 #endif
-
     if (strchr("AFUMD", *Command) == NULL) {
         StringList ArcMasks;
         ArcMasks.AddString(ArcName);
@@ -1097,7 +1077,6 @@ void CommandData::ProcessCommand() {
     } else
         AddArcName(ArcName, NULL);
 #endif
-
     switch(Command[0]) {
     case 'P':
     case 'X':

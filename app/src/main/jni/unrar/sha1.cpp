@@ -78,7 +78,6 @@ void SHA1Transform(uint32 state[5], unsigned char buffer[64], bool handsoff) {
     uint32 s[5];
     for (int I = 0; I < sizeof(s) / sizeof(s[0]); I++)
         s[I] = state[I];
-
     for (int I = 0; I < 16; I++)
         R0(s[pos[I][0]], s[pos[I][1]], s[pos[I][2]], s[pos[I][3]], s[pos[I][4]], I);
     for (int I = 16; I < 20; I++)
@@ -89,7 +88,6 @@ void SHA1Transform(uint32 state[5], unsigned char buffer[64], bool handsoff) {
         R3(s[pos[I][0]], s[pos[I][1]], s[pos[I][2]], s[pos[I][3]], s[pos[I][4]], I);
     for (int I = 60; I < 80; I++)
         R4(s[pos[I][0]], s[pos[I][1]], s[pos[I][2]], s[pos[I][3]], s[pos[I][4]], I);
-
     for (int I = 0; I < sizeof(s) / sizeof(s[0]); I++)
         state[I] += s[I];
 #else
@@ -186,7 +184,6 @@ void SHA1Transform(uint32 state[5], unsigned char buffer[64], bool handsoff) {
     state[2] += c;
     state[3] += d;
     state[4] += e;
-
     /* Wipe variables */
     a = b = c = d = e = 0;
     memset(&a, 0, sizeof(a));
@@ -212,7 +209,6 @@ void hash_process( hash_context *context, unsigned char *data, size_t len,
                    bool handsoff ) {
     unsigned int i, j;
     uint blen = ((uint)len) << 3;
-
     j = (context->count[0] >> 3) & 63;
     if ((context->count[0] += blen) < blen ) context->count[1]++;
     context->count[1] += (uint32)(len >> 29);
@@ -253,7 +249,6 @@ void hash_process( hash_context *context, unsigned char *data, size_t len,
 void hash_final( hash_context *context, uint32 digest[5], bool handsoff) {
     uint i, j;
     unsigned char finalcount[8];
-
     for (i = 0; i < 8; i++) {
         finalcount[i] = (unsigned char)((context->count[(i >= 4 ? 0 : 1)]
                                          >> ((3 - (i & 3)) * 8) ) & 255); /* Endian independent */
@@ -265,9 +260,8 @@ void hash_final( hash_context *context, uint32 digest[5], bool handsoff) {
         hash_process(context, &ch, 1, handsoff);
     }
     hash_process(context, finalcount, 8, handsoff);  /* Should cause a SHA1Transform() */
-    for (i = 0; i < 5; i++) {
+    for (i = 0; i < 5; i++)
         digest[i] = context->state[i] & 0xffffffff;
-    }
     /* Wipe variables */
     memset(&i, 0, sizeof(i));
     memset(&j, 0, sizeof(j));

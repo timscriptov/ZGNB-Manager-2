@@ -5,9 +5,7 @@ ScanTree::ScanTree(StringList *FileMasks, RECURSE_MODE Recurse, bool GetLinks, S
     ScanTree::Recurse = Recurse;
     ScanTree::GetLinks = GetLinks;
     ScanTree::GetDirs = GetDirs;
-
     ScanEntireDisk = false;
-
     SetAllMaskDepth = 0;
     *CurMask = 0;
     *CurMaskW = 0;
@@ -29,12 +27,10 @@ ScanTree::~ScanTree() {
 SCAN_CODE ScanTree::GetNext(FindData *FindData) {
     if (Depth < 0)
         return(SCAN_DONE);
-
     SCAN_CODE FindCode;
     while (1) {
         if (*CurMask == 0 && !GetNextMask())
             return(SCAN_DONE);
-
         FindCode = FindProc(FindData);
         if (FindCode == SCAN_ERROR) {
             Errors++;
@@ -60,12 +56,10 @@ bool ScanTree::GetNextMask() {
 #ifdef _WIN_32
     UnixSlashToDos(CurMask);
 #endif
-
     // We wish to scan entire disk if mask like c:\ is specified
     // regardless of recursion mode. Use c:\*.* mask when need to scan only
     // the root directory.
     ScanEntireDisk = IsDiskLetter(CurMask) && IsPathDiv(CurMask[2]) && CurMask[3] == 0;
-
     char *Name = PointToName(CurMask);
     if (*Name == 0)
         strcat(CurMask, MASKALL);
@@ -74,9 +68,7 @@ bool ScanTree::GetNextMask() {
         strcat(CurMask, MASKALL);
     }
     SpecPathLength = Name - CurMask;
-
     bool WideName = (*CurMaskW != 0);
-
     if (WideName) {
         wchar *NameW = PointToName(CurMaskW);
         if (*NameW == 0)
@@ -92,10 +84,8 @@ bool ScanTree::GetNextMask() {
         SpecPathLengthW = PointToName(WideMask) - WideMask;
     }
     Depth = 0;
-
     strcpy(OrigCurMask, CurMask);
     strcpyw(OrigCurMaskW, CurMaskW);
-
     return(true);
 }
 
@@ -104,17 +94,13 @@ SCAN_CODE ScanTree::FindProc(FindData *FindData) {
     if (*CurMask == 0)
         return(SCAN_NEXT);
     bool FastFindFile = false;
-
     if (FindStack[Depth] == NULL) { // No FindFile object for this depth yet.
         bool Wildcards = IsWildcard(CurMask, CurMaskW);
-
         // If we have a file name without wildcards, we can try to use
         // FastFind to optimize speed. For example, in Unix it results in
         // stat call instead of opendir/readdir/closedir.
         bool FindCode = !Wildcards && FindFile::FastFind(CurMask, CurMaskW, FindData, GetLinks);
-
         bool IsDir = FindCode && FindData->IsDir;
-
         // SearchAll means that we'll use "*" mask for search, so we'll find
         // subdirectories and will be able to recurse into them.
         // We do not use "*" for directories at any level or for files
@@ -147,12 +133,10 @@ SCAN_CODE ScanTree::FindProc(FindData *FindData) {
             if (!FindCode || !FindData->IsDir || Recurse == RECURSE_DISABLE) {
                 // Return SCAN_SUCCESS if we found a file.
                 SCAN_CODE RetCode = SCAN_SUCCESS;
-
                 if (!FindCode) {
                     // Return SCAN_ERROR if problem is more serious than just
                     // "file not found".
                     RetCode = FindData->Error ? SCAN_ERROR : SCAN_NEXT;
-
                     // If we failed to find an object, but our current mask is excluded,
                     // we skip this object and avoid indicating an error.
                     if (Cmd != NULL && Cmd->ExclCheck(CurMask, true, true))
@@ -160,7 +144,6 @@ SCAN_CODE ScanTree::FindProc(FindData *FindData) {
                     else
                         ErrHandler.OpenErrorMsg(ErrArcName, CurMask);
                 }
-
                 // If we searched only for one file or directory in "fast find"
                 // (without a wildcard) mode, let's set masks to zero,
                 // so calling function will know that current mask is used
@@ -170,21 +153,16 @@ SCAN_CODE ScanTree::FindProc(FindData *FindData) {
                 // which returns SCAN_DONE to calling function.
                 *CurMask = 0;
                 *CurMaskW = 0;
-
                 return(RetCode);
             }
-
             // We found a directory using only FindFile::FastFind function.
             FastFindFile = true;
         }
     }
-
     if (!FastFindFile && !FindStack[Depth]->Next(FindData, GetLinks)) {
         // We cannot find anything more in directory either because of
         // some error or just as result of all directory entries already read.
-
         bool Error = FindData->Error;
-
 #ifdef _WIN_32
         if (Error) {
             // Do not display an error if we cannot scan contents of reparse
@@ -192,28 +170,22 @@ SCAN_CODE ScanTree::FindProc(FindData *FindData) {
             // which are not accessible.
             if ((FindData->FileAttr & FILE_ATTRIBUTE_REPARSE_POINT) != 0)
                 Error = false;
-
             // Do not display an error if we cannot scan contents of
             // "System Volume Information" folder. Normally it is not accessible.
             if (strstr(CurMask, "System Volume Information\\") != NULL)
                 Error = false;
         }
 #endif
-
         if (Error && Cmd != NULL && Cmd->ExclCheck(CurMask, true, true))
             Error = false;
-
 #ifndef SILENT
-        if (Error) {
+        if (Error)
             Log(NULL, St(MScanError), CurMask);
-        }
 #endif
-
         char DirName[NM];
         wchar DirNameW[NM];
         *DirName = 0;
         *DirNameW = 0;
-
         // Going to at least one directory level higher.
         delete FindStack[Depth];
         FindStack[Depth--] = NULL;
@@ -222,7 +194,6 @@ SCAN_CODE ScanTree::FindProc(FindData *FindData) {
         if (Depth < 0) {
             // Directories scanned both in normal and FastFindFile mode,
             // finally exit from scan here, by (Depth < 0) condition.
-
             if (Error)
                 Errors++;
             return(SCAN_DONE);
@@ -241,7 +212,6 @@ SCAN_CODE ScanTree::FindProc(FindData *FindData) {
             else
                 strcpy(PrevSlash, Mask);
         }
-
         if (*CurMaskW != 0) {
             wchar *Slash = strrchrw(CurMaskW, CPATHDIVIDER);
             if (Slash != NULL) {
@@ -269,7 +239,6 @@ SCAN_CODE ScanTree::FindProc(FindData *FindData) {
         }
         return(Error ? SCAN_ERROR : SCAN_NEXT);
     }
-
     if (FindData->IsDir) {
         // If we found the directory in top (Depth==0) directory
         // and if we are not in "fast find" (directory name only as argument)
@@ -278,7 +247,6 @@ SCAN_CODE ScanTree::FindProc(FindData *FindData) {
         // or skip it.
         if (!FastFindFile && Depth == 0 && !SearchAllInRoot)
             return(GetDirs == SCAN_GETCURDIRS ? SCAN_SUCCESS : SCAN_NEXT);
-
         // Let's check if directory name is excluded, so we do not waste
         // time searching in directory, which will be excluded anyway.
         if (Cmd != NULL && Cmd->ExclCheckDir(FindData->Name)) {
@@ -287,15 +255,11 @@ SCAN_CODE ScanTree::FindProc(FindData *FindData) {
             // SCAN_DONE to go to next mask and avoid the infinite loop
             // in GetNext() function. Such loop would be possible in case of
             // SCAN_NEXT code and "rar a arc dir -xdir" command.
-
             return(FastFindFile ? SCAN_DONE : SCAN_NEXT);
         }
-
         char Mask[NM];
-
         strcpy(Mask, FastFindFile ? MASKALL : PointToName(CurMask));
         strcpy(CurMask, FindData->Name);
-
         if (strlen(CurMask) + strlen(Mask) + 1 >= NM || Depth >= MAXSCANDEPTH - 1) {
 #ifndef SILENT
             Log(NULL, "\n%s%c%s", CurMask, CPATHDIVIDER, Mask);
@@ -303,10 +267,8 @@ SCAN_CODE ScanTree::FindProc(FindData *FindData) {
 #endif
             return(SCAN_ERROR);
         }
-
         AddEndSlash(CurMask);
         strcat(CurMask, Mask);
-
         if (*CurMaskW && *FindData->NameW == 0)
             CharToWide(FindData->Name, FindData->NameW);
         if (*FindData->NameW != 0) {
@@ -322,7 +284,6 @@ SCAN_CODE ScanTree::FindProc(FindData *FindData) {
             strcatw(CurMaskW, Mask);
         }
         Depth++;
-
         // We need to use OrigCurMask for depths less than SetAllMaskDepth
         // and "*" for depths equal or larger than SetAllMaskDepth.
         // It is important when "fast finding" directories at Depth > 0.
@@ -340,12 +301,10 @@ SCAN_CODE ScanTree::FindProc(FindData *FindData) {
         // We can rewrite SearchAll expression above to avoid fast finding
         // directories at Depth > 0, but then 'rar a -r arcname Folder2'
         // will add the empty Folder2 and do not add its contents.
-
         if (FastFindFile)
             SetAllMaskDepth = Depth;
     }
     if (!FastFindFile && !CmpName(CurMask, FindData->Name, MATCH_NAMES))
         return(SCAN_NEXT);
-
     return(SCAN_SUCCESS);
 }

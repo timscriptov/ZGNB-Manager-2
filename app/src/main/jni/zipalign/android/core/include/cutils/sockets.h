@@ -48,7 +48,6 @@ static inline int android_get_control_socket(const char *name) {
     char key[64] = ANDROID_SOCKET_ENV_PREFIX;
     const char *val;
     int fd;
-
     /* build our environment variable, counting cycles like a wolf ... */
 #if HAVE_STRLCPY
     strlcpy(key + sizeof(ANDROID_SOCKET_ENV_PREFIX) - 1,
@@ -60,16 +59,13 @@ static inline int android_get_control_socket(const char *name) {
             sizeof(key) - sizeof(ANDROID_SOCKET_ENV_PREFIX));
     key[sizeof(key) - 1] = '\0';
 #endif
-
     val = getenv(key);
     if (!val)
         return -1;
-
     errno = 0;
     fd = strtol(val, NULL, 10);
     if (errno)
         return -1;
-
     return fd;
 }
 

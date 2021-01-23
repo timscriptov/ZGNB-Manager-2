@@ -16,7 +16,6 @@ void SetPriority(int Priority) {
     int PriorityLevel;
     if (Priority < 1 || Priority > 15)
         return;
-
     if (Priority == 1) {
         PriorityClass = IDLE_PRIORITY_CLASS;
         PriorityLevel = THREAD_PRIORITY_IDLE;
@@ -38,11 +37,9 @@ void SetPriority(int Priority) {
     }
     SetPriorityClass(GetCurrentProcess(), PriorityClass);
     SetThreadPriority(GetCurrentThread(), PriorityLevel);
-
     //  Background mode for Vista, too slow for real life use.
     //  if (WinNT()>=6 && Priority==1)
     //    SetPriorityClass(GetCurrentProcess(),PROCESS_MODE_BACKGROUND_BEGIN);
-
 #endif
 }
 #endif
@@ -67,7 +64,6 @@ void Shutdown() {
         LookupPrivilegeValue(NULL, SE_SHUTDOWN_NAME, &tkp.Privileges[0].Luid);
         tkp.PrivilegeCount = 1;
         tkp.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
-
         AdjustTokenPrivileges(hToken, FALSE, &tkp, 0, (PTOKEN_PRIVILEGES)NULL, 0);
     }
     ExitWindowsEx(EWX_SHUTDOWN | EWX_FORCE | EWX_POWEROFF, SHTDN_REASON_FLAG_PLANNED);

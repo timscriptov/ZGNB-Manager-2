@@ -48,7 +48,6 @@ bool FileCreate(RAROptions *Cmd, File *NewFile, char *Name, wchar *NameW,
             }
             if (Choice == 5) {
                 mprintf(St(MAskNewName));
-
                 char NewName[NM];
 #ifdef  _WIN_32
                 File SrcFile;
@@ -95,7 +94,6 @@ bool FileCreate(RAROptions *Cmd, File *NewFile, char *Name, wchar *NameW,
 
 bool GetAutoRenamedName(char *Name) {
     char NewName[NM];
-
     if (strlen(Name) > sizeof(NewName) - 10)
         return(false);
     char *Ext = GetExt(Name);
@@ -124,7 +122,6 @@ bool UpdateExistingShortName(char *Name, wchar *NameW) {
     if (stricomp(PointToName(fd.Name), fd.ShortName) == 0 ||
             stricomp(PointToName(Name), fd.ShortName) != 0)
         return(false);
-
     char NewName[NM];
     for (int I = 0; I < 10000; I += 123) {
         strncpyz(NewName, Name, ASIZE(NewName));

@@ -41,9 +41,8 @@ namespace android {
     }
 
     SharedBuffer *SharedBuffer::edit() const {
-        if (onlyOwner()) {
+        if (onlyOwner())
             return const_cast<SharedBuffer *>(this);
-        }
         SharedBuffer *sb = alloc(mSize);
         if (sb) {
             memcpy(sb->data(), data(), size());
@@ -72,18 +71,16 @@ namespace android {
     }
 
     SharedBuffer *SharedBuffer::attemptEdit() const {
-        if (onlyOwner()) {
+        if (onlyOwner())
             return const_cast<SharedBuffer *>(this);
-        }
         return 0;
     }
 
     SharedBuffer *SharedBuffer::reset(size_t new_size) const {
         // cheap-o-reset.
         SharedBuffer *sb = alloc(new_size);
-        if (sb) {
+        if (sb)
             release();
-        }
         return sb;
     }
 
@@ -95,9 +92,8 @@ namespace android {
         int32_t prev = 1;
         if (onlyOwner() /*|| ((prev = android_atomic_dec(&mRefs)) == 1)*/) {
             mRefs = 0;
-            if ((flags & eKeepStorage) == 0) {
+            if ((flags & eKeepStorage) == 0)
                 free(const_cast<SharedBuffer *>(this));
-            }
         }
         return prev;
     }

@@ -6,7 +6,6 @@ void ExtractUnixOwner(Archive &Arc, char *FileName) {
         ErrHandler.SetErrorCode(CRC_ERROR);
         return;
     }
-
     struct passwd *pw;
     if ((pw = getpwnam(Arc.UOHead.OwnerName)) == NULL) {
         Log(Arc.FileName, St(MErrGetOwnerID), Arc.UOHead.OwnerName);
@@ -14,7 +13,6 @@ void ExtractUnixOwner(Archive &Arc, char *FileName) {
         return;
     }
     uid_t OwnerID = pw->pw_uid;
-
     struct group *gr;
     if ((gr = getgrnam(Arc.UOHead.GroupName)) == NULL) {
         Log(Arc.FileName, St(MErrGetGroupID), Arc.UOHead.GroupName);
@@ -43,7 +41,6 @@ void ExtractUnixOwnerNew(Archive &Arc, char *FileName) {
     char GroupName[NM];
     strncpy(GroupName, (char *)&Arc.SubHead.SubData[OwnerSize], GroupSize);
     GroupName[GroupSize] = 0;
-
     struct passwd *pw;
     if ((pw = getpwnam(OwnerName)) == NULL) {
         Log(Arc.FileName, St(MErrGetOwnerID), OwnerName);
@@ -51,7 +48,6 @@ void ExtractUnixOwnerNew(Archive &Arc, char *FileName) {
         return;
     }
     uid_t OwnerID = pw->pw_uid;
-
     struct group *gr;
     if ((gr = getgrnam(GroupName)) == NULL) {
         Log(Arc.FileName, St(MErrGetGroupID), GroupName);

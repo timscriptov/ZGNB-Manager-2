@@ -107,9 +107,8 @@ namespace android {
             pthread_mutexattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);
             pthread_mutex_init(&mMutex, &attr);
             pthread_mutexattr_destroy(&attr);
-        } else {
+        } else
             pthread_mutex_init(&mMutex, NULL);
-        }
     }
     inline Mutex::~Mutex() {
         pthread_mutex_destroy(&mMutex);

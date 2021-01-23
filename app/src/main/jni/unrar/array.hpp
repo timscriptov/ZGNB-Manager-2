@@ -41,7 +41,6 @@ template <class T> Array<T>::Array(size_t Size) {
     Buffer = (T *)rarmalloc(sizeof(T) * Size);
     if (Buffer == NULL && Size != 0)
         ErrHandler.MemoryError();
-
     AllocSize = BufSize = Size;
 }
 
@@ -67,7 +66,6 @@ template <class T> void Array<T>::Add(size_t Items) {
     if (BufSize > AllocSize) {
         size_t Suggested = AllocSize + AllocSize / 4 + 32;
         size_t NewSize = Max(BufSize, Suggested);
-
         Buffer = (T *)rarrealloc(Buffer, NewSize * sizeof(T));
         if (Buffer == NULL)
             ErrHandler.MemoryError();

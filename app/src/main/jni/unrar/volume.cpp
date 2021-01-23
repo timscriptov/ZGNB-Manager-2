@@ -12,35 +12,26 @@
 
 bool MergeArchive(Archive &Arc, ComprDataIO *DataIO, bool ShowFileName, char Command) {
     RAROptions *Cmd = Arc.GetRAROptions();
-
     int HeaderType = Arc.GetHeaderType();
     FileHeader *hd = HeaderType == NEWSUB_HEAD ? &Arc.SubHead : &Arc.NewLhd;
     bool SplitHeader = (HeaderType == FILE_HEAD || HeaderType == NEWSUB_HEAD) &&
                        (hd->Flags & LHD_SPLIT_AFTER) != 0;
-
     if (DataIO != NULL && SplitHeader && hd->UnpVer >= 20 &&
-            hd->FileCRC != 0xffffffff && DataIO->PackedCRC != ~hd->FileCRC) {
+            hd->FileCRC != 0xffffffff && DataIO->PackedCRC != ~hd->FileCRC)
         Log(Arc.FileName, St(MDataBadCRC), hd->FileName, Arc.FileName);
-    }
-
     int64 PosBeforeClose = Arc.Tell();
-
     if (DataIO != NULL)
         DataIO->ProcessedArcSize += Arc.FileLength();
-
     Arc.Close();
-
     char NextName[NM];
     wchar NextNameW[NM];
     strcpy(NextName, Arc.FileName);
     strcpyw(NextNameW, Arc.FileNameW);
     NextVolumeName(NextName, NextNameW, ASIZE(NextName), (Arc.NewMhd.Flags & MHD_NEWNUMBERING) == 0 || Arc.OldFormat);
-
 #if !defined(SFX_MODULE) && !defined(RARDLL)
     bool RecoveryDone = false;
 #endif
     bool FailedOpen = false, OldSchemeTested = false;
-
     while (!Arc.Open(NextName, NextNameW)) {
         // We need to open a new volume which size was not calculated
         // in total size before, so we cannot calculate the total progress
@@ -48,7 +39,6 @@ bool MergeArchive(Archive &Arc, ComprDataIO *DataIO, bool ShowFileName, char Com
         // the total progress.
         if (DataIO != NULL)
             DataIO->TotalArcSize = 0;
-
         if (!OldSchemeTested) {
             // Checking for new style volumes renamed by user to old style
             // name format. Some users did it for unknown reason.
@@ -84,7 +74,6 @@ bool MergeArchive(Archive &Arc, ComprDataIO *DataIO, bool ShowFileName, char Com
             _EBX = _ESP;
 #endif
             int RetCode = Cmd->ChangeVolProc(NextName, RAR_VOL_ASK);
-
             // Restore ESP after ChangeVolProc with wrongly defined calling
             // convention broken it.
 #if defined(_MSC_VER)
@@ -101,7 +90,6 @@ bool MergeArchive(Archive &Arc, ComprDataIO *DataIO, bool ShowFileName, char Com
             }
         }
 #else // RARDLL
-
 #if !defined(SFX_MODULE) && !defined(_WIN_CE)
         if (!RecoveryDone) {
             RecVolumes RecVol;
@@ -110,7 +98,6 @@ bool MergeArchive(Archive &Arc, ComprDataIO *DataIO, bool ShowFileName, char Com
             continue;
         }
 #endif
-
 #ifndef GUI
         if (!Cmd->VolumePause && !IsRemovable(NextName)) {
             FailedOpen = true;
@@ -124,7 +111,6 @@ bool MergeArchive(Archive &Arc, ComprDataIO *DataIO, bool ShowFileName, char Com
             FailedOpen = true;
             break;
         }
-
 #endif // RARDLL
         *NextNameW = 0;
     }
@@ -153,7 +139,6 @@ bool MergeArchive(Archive &Arc, ComprDataIO *DataIO, bool ShowFileName, char Com
             return(false);
     }
 #endif
-
     if (Command == 'T' || Command == 'X' || Command == 'E')
         mprintf(St(Command == 'T' ? MTestVol : MExtrVol), Arc.FileName);
     if (SplitHeader)
@@ -193,12 +178,10 @@ bool MergeArchive(Archive &Arc, ComprDataIO *DataIO, bool ShowFileName, char Com
 #ifdef SFX_MODULE
         DataIO->UnpArcSize = Arc.FileLength();
 #endif
-
         // Reset the size of packed data read from current volume. It is used
         // to display the total progress and preceding volumes are already
         // compensated with ProcessedArcSize, so we need to reset this variable.
         DataIO->CurUnpRead = 0;
-
         DataIO->PackedCRC = 0xffffffff;
         //    DataIO->SetFiles(&Arc,NULL);
     }

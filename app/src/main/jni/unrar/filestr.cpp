@@ -10,11 +10,9 @@ bool ReadTextFile(const char *Name, StringList *List, bool Config,
         GetConfigName(Name, FileName, true);
     else
         strcpy(FileName, Name);
-
     File SrcFile;
     if (*FileName) {
         bool OpenCode = AbortOnError ? SrcFile.WOpen(FileName) : SrcFile.Open(FileName);
-
         if (!OpenCode) {
             if (AbortOnError)
                 ErrHandler.Exit(OPEN_ERROR);
@@ -22,7 +20,6 @@ bool ReadTextFile(const char *Name, StringList *List, bool Config,
         }
     } else
         SrcFile.SetHandleType(FILE_HANDLESTD);
-
     unsigned int DataSize = 0, ReadSize;
     const int ReadBlock = 1024;
     Array<char> Data(ReadBlock + 5);
@@ -30,9 +27,7 @@ bool ReadTextFile(const char *Name, StringList *List, bool Config,
         DataSize += ReadSize;
         Data.Add(ReadSize);
     }
-
     memset(&Data[DataSize], 0, 5);
-
     if (SrcCharset == RCH_UNICODE ||
             SrcCharset == RCH_DEFAULT && IsUnicode((byte *)&Data[0], DataSize)) {
         // Unicode in native system format, can be more than 2 bytes per character.
@@ -42,10 +37,8 @@ bool ReadTextFile(const char *Name, StringList *List, bool Config,
             // to higher bytes.
             DataW[(I - 2) / 2] = (wchar)((byte)Data[I]) + (wchar)((byte)Data[I + 1]) * 256;
         }
-
         wchar *CurStr = &DataW[0];
         Array<char> AnsiName;
-
         while (*CurStr != 0) {
             wchar *NextStr = CurStr, *CmtPtr = NULL;
             while (*NextStr != '\r' && *NextStr != '\n' && *NextStr != 0) {
@@ -66,7 +59,6 @@ bool ReadTextFile(const char *Name, StringList *List, bool Config,
                 // can be negative.
                 int Length = (int)strlenw(CurStr);
                 int AddSize = 4 * (Length - (int)AnsiName.Size() + 1);
-
                 if (AddSize > 0)
                     AnsiName.Add(AddSize);
                 if (Unquote && *CurStr == '\"' && CurStr[Length - 1] == '\"') {
@@ -74,12 +66,10 @@ bool ReadTextFile(const char *Name, StringList *List, bool Config,
                     CurStr++;
                 }
                 WideToChar(CurStr, &AnsiName[0], AnsiName.Size());
-
                 bool Expanded = false;
 #if defined(_WIN_32) && !defined(_WIN_CE)
                 if (ExpandEnvStr && *CurStr == '%') {
                     // expanding environment variables in Windows version
-
                     char ExpName[NM];
                     wchar ExpNameW[NM];
                     *ExpNameW = 0;
@@ -129,12 +119,10 @@ bool ReadTextFile(const char *Name, StringList *List, bool Config,
                 if (SrcCharset == RCH_OEM)
                     OemToChar(CurStr, CurStr);
 #endif
-
                 bool Expanded = false;
 #if defined(_WIN_32) && !defined(_WIN_CE)
                 if (ExpandEnvStr && *CurStr == '%') {
                     // expanding environment variables in Windows version
-
                     char ExpName[NM];
                     int ret = ExpandEnvironmentStrings(CurStr, ExpName, ASIZE(ExpName));
                     Expanded = ret != 0 && ret < ASIZE(ExpName);

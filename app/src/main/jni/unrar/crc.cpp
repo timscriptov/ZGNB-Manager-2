@@ -11,12 +11,10 @@ void InitCRC() {
     }
 }
 
-
 uint CRC(uint StartCRC, const void *Addr, size_t Size) {
     if (CRCTab[1] == 0)
         InitCRC();
     byte *Data = (byte *)Addr;
-
 #if defined(LITTLE_ENDIAN) && defined(PRESENT_INT32) && defined(ALLOW_NOT_ALIGNED_INT)
     while (Size > 0 && ((long)Data & 7)) {
         StartCRC = CRCTab[(byte)(StartCRC ^ Data[0])] ^ (StartCRC >> 8);
@@ -38,7 +36,6 @@ uint CRC(uint StartCRC, const void *Addr, size_t Size) {
         Size -= 8;
     }
 #endif
-
     for (size_t I = 0; I < Size; I++)
         StartCRC = CRCTab[(byte)(StartCRC ^ Data[I])] ^ (StartCRC >> 8);
     return(StartCRC);
